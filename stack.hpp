@@ -53,13 +53,11 @@ public:
         container_.push_back(val);
     }
 
-    //todo нужен ли emplace_back??
-
     void pop() {
         container_.pop_back();
     }
 
-    //todo нужны ли здесь эти шаблонные параметры и для чего?
+    //todo видел реализацию с шаблонными параметрами нужны ли они здесь эти шаблонные параметры и для чего?
     friend bool operator== (const stack<value_type , container_type> &lhs, const stack<value_type , container_type> &rhs) {
         return lhs.container_ == rhs.container_;
     }
@@ -90,4 +88,4 @@ private:
 
 } //namespace ft
 
-#endif
+#endif //STACK_HPP
