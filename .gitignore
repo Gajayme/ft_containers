@@ -4,3 +4,4 @@ a.out
 test_stack.cpp
 .vscode
 .idea
+*.gch
