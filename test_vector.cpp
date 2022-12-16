@@ -146,34 +146,62 @@ void reserveTests() {
     }
 }
 
+void exceptionSafetyTest() {
+
+    ft::vector<vector_tests_classes::CopyExceptionClass> ftVector;
+    std::vector<vector_tests_classes::CopyExceptionClass> stdVector;
+    size_t n = 10;
+
+    ftVector.resize(n, std::string("hello"));
+    stdVector.resize(n, std::string("hello"));
+
+    assert(ftVector.size() == stdVector.size());
+    assert(ftVector.capacity() == stdVector.capacity());
+
+    n *= 2;
+    //todo если увиличить на 15, то capacity у стандартного вектора станет 20 почему-то
+
+    try {
+        ftVector.resize(n, std::string("bye"));
+    } catch (...) {
+    }
+    try {
+        stdVector.resize(n, std::string("bye"));
+    } catch (...) {
+    }
+    assert(ftVector.size() == stdVector.size());
+    assert(ftVector.capacity() == stdVector.capacity());
+}
 
 int main(void) {
 
-//    resizeTests();
-//    reserveTests();
+    resizeTests();
+    reserveTests();
+    exceptionSafetyTest();
+ //   printer(vec.size(), vec.capacity());
 
-    std::vector<int> vec;
-    ft::vector<int> ftvec;
-    vec.push_back(1);
-    ftvec.push_back(1);
-    printer(vec.size(), ftvec.size());
-    printer(vec.capacity(), ftvec.capacity());
-    vec.push_back(2);
-    ftvec.push_back(2);
-    printer(vec.size(), ftvec.size());
-    printer(vec.capacity(), ftvec.capacity());
-    vec.push_back(3);
-    ftvec.push_back(3);
-    printer(vec.size(), ftvec.size());
-    printer(vec.capacity(), ftvec.capacity());
-    printer(vec.size(), ftvec.size());
-    printer(vec.capacity(), ftvec.capacity());
+//    std::vector<int> vec;
+//    ft::vector<int> ftvec;
+//    vec.push_back(1);
+//    ftvec.push_back(1);
+//    printer(vec.size(), ftvec.size());
+//    printer(vec.capacity(), ftvec.capacity());
+//    vec.push_back(2);
+//    ftvec.push_back(2);
+//    printer(vec.size(), ftvec.size());
+//    printer(vec.capacity(), ftvec.capacity());
+//    vec.push_back(3);
+//    ftvec.push_back(3);
+//    printer(vec.size(), ftvec.size());
+//    printer(vec.capacity(), ftvec.capacity());
+//    printer(vec.size(), ftvec.size());
+//    printer(vec.capacity(), ftvec.capacity());
+//
+//    ftvec.resize(1);
+//    vec.resize(1);
 
-    ftvec.resize(1);
-    vec.resize(1);
-
-    printer(vec.size(), ftvec.size());
-    printer(vec.capacity(), ftvec.capacity());
+//    printer(vec.size(), ftvec.size());
+//    printer(vec.capacity(), ftvec.capacity());
 
     return (0);
 }

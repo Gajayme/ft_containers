@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 
 namespace vector_tests_classes {
 
@@ -39,6 +40,24 @@ public:
 
     CopyConstructorClass(const CopyConstructorClass &other) {
         str_ = other.str_;
+    }
+
+private:
+    std::string str_;
+};
+
+//! Класс с исключением в конструкторе копирования
+class CopyExceptionClass {
+public:
+    CopyExceptionClass(std::string str = "default") :
+            str_(str) {
+    }
+
+    CopyExceptionClass(const CopyExceptionClass &other) {
+        str_ = other.str_;
+        if (str_ == "bye") {
+            throw "bye";
+        }
     }
 
 private:
