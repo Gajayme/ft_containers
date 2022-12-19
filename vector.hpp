@@ -11,10 +11,32 @@ template <class T>
 class vector {
 public:
     explicit vector (/* const allocator_type& alloc = allocator_type() */):
+    //todo чем задать arr_ изначально?
     arr_(NULL),
     size_(0),
     capacity_(0) {
     }
+
+    explicit vector (size_t n, const T &value = T()
+                     /*, const allocator_type& alloc = allocator_type()*/) {
+        resize (n, value);
+    };
+
+    vector (const vector& other) {
+        arr_ = reinterpret_cast<T*>(::new int8_t[other.size_ * sizeof(T)]);
+        capacity_ = other.size_;
+        size_ = other.size_;
+        for (size_t i = 0; i < size_; ++i) {
+            ::new (arr_ + i) T(other[i]);
+        }
+    }
+
+    ~vector(){
+        for (size_t i = 0; i < size_; ++i) {
+            (arr_ + i)->~T();
+        }
+        delete[] reinterpret_cast<int8_t *>(arr_);
+    };
 
     size_t size() const {
         return size_;
@@ -100,15 +122,56 @@ public:
         ++size_;
     }
 
-    //todo нужно ли убрать эту защиту от переполнения size_
-    // при pop_back( пустого вектора. В обычном векторе ее нет.
     void pop_back() {
-        if (size_ == 0) {
-            return;
-        }
-        (arr_ + size_)->~T();
         --size_;
+        (arr_ + size_)->~T();
     }
+
+    void clear() {
+        for (size_t i = 0; i <  size_; ++i) {
+            (arr_ + i)->~T();
+        }
+        size_ = 0;
+    }
+
+    T& operator[](const size_t n) {
+        return arr_[n];
+    }
+
+    const T& operator[](const size_t n) const {
+        return  arr_[n];
+    }
+
+    T& at(const size_t n) {
+        if (n >= size_) {
+            throw std::out_of_range("Ft::vector:at: out of range");
+        }
+        return arr_[n];
+    }
+
+    const T& at(const size_t n) const{
+        if (n >= size_) {
+            throw std::out_of_range("Ft::vector:const_at: out of range");
+        }
+        return arr_[n];
+    }
+
+    T& front() {
+        return arr_[0];
+    }
+
+    const T& front() const{
+        return arr_[0];
+    }
+
+    T& back() {
+        return arr_[size_ - 1];
+    }
+
+    const T& back() const{
+        return arr_[size_ - 1];
+    }
+
 
 private:
     T *arr_;

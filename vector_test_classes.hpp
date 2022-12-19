@@ -42,11 +42,22 @@ public:
         str_ = other.str_;
     }
 
+    friend bool operator ==(const CopyConstructorClass &lhs, const CopyConstructorClass &rhs) {
+        return lhs.str_ == rhs.str_;
+    }
+
+    ~CopyConstructorClass() {
+
+    }
+
 private:
     std::string str_;
 };
 
+
+
 //! Класс с исключением в конструкторе копирования
+//todo сделать конструктор explicit
 class CopyExceptionClass {
 public:
     CopyExceptionClass(std::string str = "default") :
