@@ -12,9 +12,13 @@ void printer(T std, T ft) {
 
 //todo ошибка в передаче вектора по значению (нужен конструктор копирования)
 template <typename STD, typename  FT>
-void asserter(STD &std, FT &my) {
-    assert(std.size() == my.size());
-    assert(std.capacity() == my.capacity());
+void asserter(STD &std, FT &ft) {
+    assert(std.size() == ft.size());
+    assert(std.capacity() == ft.capacity());
+    if (!std.empty() && !ft.empty()) {
+        assert(std.front() == ft.front());
+        assert(std.back() == ft.back());
+    }
 }
 
 typedef std::vector<vector_tests_classes::CopyConstructorClass> StdCopyCrtrVector;
@@ -22,7 +26,6 @@ typedef ft::vector<vector_tests_classes::CopyConstructorClass> FtCopyCrtrVector;
 typedef std::vector<vector_tests_classes::CopyExceptionClass> StdExceptVector;
 typedef ft::vector<vector_tests_classes::CopyExceptionClass> FtExceptVector;
 
-//todo здесь как будто есть ошибка
 void constructorsTest() {
     {
         std::vector<int> stdVector(1, 100);
@@ -35,6 +38,43 @@ void constructorsTest() {
         ft::vector<int> ftVector(10, 100);
         asserter(stdVector, ftVector);
     }
+    {
+        StdCopyCrtrVector stdVector;
+        FtCopyCrtrVector ftVector;
+    }
+    {
+        try {
+            StdExceptVector stdVec(10, std::string("bye"));
+            FtExceptVector ftVec(10, std::string("bye"));
+        } catch (...) {
+        }
+    }
+}
+
+void assignmentOperatorTest() {
+    {
+        std::vector<int> stdVector(1, 100);
+        ft::vector<int> ftVector(1, 100);
+
+        std::vector<int> stdVector2(2, 50);
+        ft::vector<int> ftVector2(2, 50);
+
+        stdVector = stdVector2;
+        ftVector = ftVector2;
+        asserter(ftVector, stdVector);
+    }
+    {
+        StdCopyCrtrVector stdVector(10, std::string("hi"));
+        FtCopyCrtrVector ftVector(10, std::string("hi"));
+
+        StdCopyCrtrVector stdVector2(5, std::string("hello"));
+        FtCopyCrtrVector ftVector2(5, std::string("hello"));
+
+        ftVector = ftVector2;
+        stdVector = stdVector2;
+        asserter(ftVector, stdVector);
+    }
+
 }
 
 void copyConstructorsTest() {
@@ -70,7 +110,50 @@ void copyConstructorsTest() {
     }
 }
 
-//! нужны тесты на значения, которые будут лежать внутри векторов
+void dataTest() {
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+        assert(stdVector.data() == NULL);
+        assert(ftVector.data() == NULL);
+    }
+    {
+        std::vector<int> stdVector(1, 100);
+        ft::vector<int> ftVector(1, 100);
+        assert(stdVector.data()[0] = ftVector.data()[0]);
+    }
+}
+
+void allocatorTest() {
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+        assert(stdVector.get_allocator() == ftVector.get_allocator());
+    }
+}
+
+void swapTest () {
+    {
+        std::vector<int> stdVector(9, 9);
+        std::vector<int> stdVector1(10, 10);
+        ft::vector<int> ftVector(10, 10);
+        ft::vector<int> ftVector1(9, 9);
+        ftVector.swap(ftVector1);
+        asserter(stdVector, ftVector);
+        asserter(stdVector1, ftVector1);
+    }
+    {
+        std::vector<int> stdVector;
+        std::vector<int> stdVector1(10, 10);
+        ft::vector<int> ftVector(10, 10);
+        ft::vector<int> ftVector1;
+        ftVector.swap(ftVector1);
+        asserter(stdVector, ftVector);
+        asserter(stdVector1, ftVector1);
+    }
+}
+
+//todo нужны тесты на значения, которые будут лежать внутри векторов
 void resizeTests() {
     //! тесты с int
     {
@@ -125,6 +208,72 @@ void resizeTests() {
         ftVector.resize(0);
 
         asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+    }
+}
+
+void assignTests() {
+    //! тесты с int
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+
+        stdVector.assign(10, 99);
+        ftVector.assign(10, 99);
+
+        asserter(stdVector, ftVector);
+
+        stdVector.assign(5, 88);
+        ftVector.assign(5, 88);
+
+        asserter(stdVector, ftVector);
+    }
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+
+        stdVector.assign(10, 99);
+        ftVector.assign(10, 99);
+        asserter(stdVector, ftVector);
+    }
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+
+        stdVector.assign(10, 99);
+        ftVector.assign(10, 99);
+
+        asserter(stdVector, ftVector);
+
+        stdVector.assign(100, 77);
+        ftVector.assign(100, 77);
+
+        asserter(stdVector, ftVector);
+    }
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+
+        stdVector.assign(10, 99);
+        ftVector.assign(10, 99);
+
+        asserter(stdVector, ftVector);
+
+        stdVector.assign(5, 88);
+        ftVector.assign(5, 88);
+
+        stdVector.assign(100, 77);
+        ftVector.assign(100, 77);
+
+        asserter(stdVector, ftVector);
+    }
+    {
+        std::vector<int> stdVector;
+        ft::vector<int> ftVector;
+
+        stdVector.assign(0, 99);
+        ftVector.assign(0, 99);
+
+        asserter(stdVector, ftVector);
     }
 }
 
@@ -484,27 +633,40 @@ void exceptionSafetyTest() {
 
 void test() {
     std::vector<int> stdVec;
-    ft::vector<int> ftVec;
+
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+
+    stdVec.assign(3, 10);
+
+    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+
+    //ft::vector<int> ftVec;
 }
 
 int main(void) {
 
-//    constructorsTest();
-//    copyConstructorsTest();
-//    resizeTests();
-//    reserveTests();
-//    pushBackTest();
-//    popBackTest();
-//    //todo для всех const методов надо будет сделать const версии тестов
-//    bracesOperatorTest();
-//    atTest();
-//    frontTest();
-//    backTest();
-//    emptyTest();
-//    clearTest();
-//    exceptionSafetyTest();
+    constructorsTest();
+    copyConstructorsTest();
+    assignmentOperatorTest();
+    resizeTests();
+    assignTests();
+    swapTest();
+    reserveTests();
+    pushBackTest();
+    popBackTest();
+    //todo для всех const методов надо будет сделать const версии тестов
+    bracesOperatorTest();
+    atTest();
+    frontTest();
+    backTest();
+    emptyTest();
+    clearTest();
+    dataTest();
+    allocatorTest();
+    exceptionSafetyTest();
 
-    test();
+    //test();
 
     return (0);
 }

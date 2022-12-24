@@ -71,6 +71,10 @@ public:
         }
     }
 
+    friend bool operator ==(const CopyExceptionClass &lhs, const CopyExceptionClass &rhs) {
+        return lhs.str_ == rhs.str_;
+    }
+
 private:
     std::string str_;
 };
