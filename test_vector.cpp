@@ -25,8 +25,8 @@ typedef ft::vector<vector_tests_classes::CopyExceptionClass> FtExceptVector;
 //todo здесь как будто есть ошибка
 void constructorsTest() {
     {
-        std::vector<int> stdVector(0, 100);
-        ft::vector<int> ftVector(0, 100);
+        std::vector<int> stdVector(1, 100);
+        ft::vector<int> ftVector(1, 100);
 
         asserter(stdVector, ftVector);
     }
@@ -46,14 +46,14 @@ void copyConstructorsTest() {
 
         asserter(stdVectorCopy, ftVectorCopy);
     }
-//    {
-//        std::vector<int> stdVector(10, 100);
-//        std::vector<int> stdVectorCopy(stdVector);
-//        ft::vector<int> ftVector(10, 100);
-//        ft::vector<int> ftVectorCopy(ftVector);
-//
-//        asserter(stdVectorCopy, ftVectorCopy);
-//    }
+    {
+        std::vector<int> stdVector(10, 100);
+        std::vector<int> stdVectorCopy(stdVector);
+        ft::vector<int> ftVector(10, 100);
+        ft::vector<int> ftVectorCopy(ftVector);
+
+        asserter(stdVectorCopy, ftVectorCopy);
+    }
     {
         std::vector<int> stdVector;
         for (size_t i = 0; i != 10; ++i) {
@@ -483,29 +483,28 @@ void exceptionSafetyTest() {
 }
 
 void test() {
-    std::vector<int> vec(15, 100);
-    std::cout << vec.size() << std::endl;
-    std::cout << vec.capacity() << std::endl;
+    std::vector<int> stdVec;
+    ft::vector<int> ftVec;
 }
 
 int main(void) {
 
-    //constructorsTest();
-    copyConstructorsTest();
-    resizeTests();
-    reserveTests();
-    pushBackTest();
-    popBackTest();
-    //todo для всех const методов надо будет сделать const версии тестов
-    bracesOperatorTest();
-    atTest();
-    frontTest();
-    backTest();
-    emptyTest();
-    clearTest();
-    exceptionSafetyTest();
+//    constructorsTest();
+//    copyConstructorsTest();
+//    resizeTests();
+//    reserveTests();
+//    pushBackTest();
+//    popBackTest();
+//    //todo для всех const методов надо будет сделать const версии тестов
+//    bracesOperatorTest();
+//    atTest();
+//    frontTest();
+//    backTest();
+//    emptyTest();
+//    clearTest();
+//    exceptionSafetyTest();
 
-    //test();
+    test();
 
     return (0);
 }

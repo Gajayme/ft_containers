@@ -5,3 +5,4 @@ test_stack.cpp
 .vscode
 .idea
 *.gch
+test.cpp

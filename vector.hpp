@@ -7,35 +7,51 @@
 
 namespace ft {
 
-template <class T>
+template <class T, typename AllocatorType = std::allocator<T> >
 class vector {
 public:
-    explicit vector (/* const allocator_type& alloc = allocator_type() */):
-    //todo чем задать arr_ изначально?
+    explicit vector (const AllocatorType& alloc = AllocatorType()):
     arr_(NULL),
     size_(0),
-    capacity_(0) {
+    capacity_(0),
+    allocator_(alloc) {
     }
 
-    explicit vector (size_t n, const T &value = T()
-                     /*, const allocator_type& alloc = allocator_type()*/) {
+    //todo точно ли такой конструктор
+    explicit vector (size_t n, const T &value = T(), const AllocatorType& alloc = AllocatorType()):
+    arr_(NULL),
+    size_(0),
+    capacity_(0),
+    allocator_(alloc) {
+//        reserve(n);
+//        for (size_t i = 0; i < n; ++i) {
+//            allocator_.construct(arr_ + i, value);
+//        }
+//        size_ = n;
         resize (n, value);
     };
 
     vector (const vector& other) {
-        arr_ = reinterpret_cast<T*>(::new int8_t[other.size_ * sizeof(T)]);
+        allocator_ = other.allocator_;
+        arr_ = allocator_.allocate(other.capacity_);
+        //arr_ = reinterpret_cast<T*>(::new int8_t[other.size_ * sizeof(T)]);
         capacity_ = other.size_;
         size_ = other.size_;
         for (size_t i = 0; i < size_; ++i) {
-            ::new (arr_ + i) T(other[i]);
+            allocator_.construct(arr_ + i, T(other[i]));
+            //::new (arr_ + i) T(other[i]);
         }
     }
 
     ~vector(){
         for (size_t i = 0; i < size_; ++i) {
-            (arr_ + i)->~T();
+            allocator_.destroy(arr_ + i);
+            //(arr_ + i)->~T();
         }
-        delete[] reinterpret_cast<int8_t *>(arr_);
+        if (arr_ != NULL) {
+            allocator_.deallocate(arr_, capacity_);
+        }
+        //delete[] reinterpret_cast<int8_t *>(arr_);
     };
 
     size_t size() const {
@@ -53,7 +69,8 @@ public:
     void resize(size_t n, const T &value = T()) {
         if (n < size_) {
             for (size_t i = n; i < size_; ++i) {
-                (arr_ + i)->~T();
+                allocator_.destroy(arr_ + i);
+                //(arr_ + i)->~T();
             }
             size_ = n;
             return;
@@ -82,11 +99,13 @@ public:
         if (n <= capacity_) {
             return;
         }
-        T *newArr = reinterpret_cast<T*>(::new int8_t[n * sizeof(T)]);
+        T *newArr = allocator_.allocate(n);
+        //T *newArr = reinterpret_cast<T*>(::new int8_t[n * sizeof(T)]);
         try {
             std::uninitialized_copy(arr_, arr_ + size_, newArr);
         } catch (...) {
-            delete[] reinterpret_cast<int8_t *>(arr_);
+            allocator_.deallocate(newArr, n);
+            //delete[] reinterpret_cast<int8_t *>(arr_);
             throw;
         }
         //        size_t  i = 0;
@@ -102,9 +121,11 @@ public:
 //            throw;
 //        }
         for (size_t i = 0; i <  size_; ++i) {
-            (arr_ + i)->~T();
+            allocator_.destroy(arr_ + i);
+            //(arr_ + i)->~T();
         }
-        delete[] reinterpret_cast<int8_t *>(arr_);
+        allocator_.deallocate(arr_, capacity_);
+        //delete[] reinterpret_cast<int8_t *>(arr_);
         arr_ = newArr;
         capacity_ = n;
     }
@@ -115,7 +136,8 @@ public:
         }
         //todo правильно ли здесь реализована обработка исключений?
         try {
-            ::new (arr_ + size_) T(value);
+            allocator_.construct(arr_ + size_, T(value));
+            //::new (arr_ + size_) T(value);
         } catch(...) {
             throw;
         }
@@ -124,12 +146,14 @@ public:
 
     void pop_back() {
         --size_;
-        (arr_ + size_)->~T();
+        //(arr_ + size_)->~T();
+        allocator_.destroy(arr_ + size_);
     }
 
     void clear() {
         for (size_t i = 0; i <  size_; ++i) {
-            (arr_ + i)->~T();
+            allocator_.destroy(arr_ + i);
+            //(arr_ + i)->~T();
         }
         size_ = 0;
     }
@@ -177,6 +201,7 @@ private:
     T *arr_;
     size_t size_;
     size_t capacity_;
+    AllocatorType  allocator_;
 
     void resize_exception_handler (const size_t oldCapacity) {
         T *newArr = reinterpret_cast<T*>(::new int8_t[oldCapacity * sizeof(T)]);
@@ -193,7 +218,8 @@ private:
             throw;
         }
         for (size_t i = 0; i <  size_; ++i) {
-            (arr_ + i)->~T();
+            allocator_.destroy(arr_ + i);
+            //(arr_ + i)->~T();
         }
         delete[] reinterpret_cast<int8_t *>(arr_);
         arr_ = newArr;
