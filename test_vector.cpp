@@ -587,8 +587,243 @@ void clearTest() {
     }
 }
 
-void exceptionSafetyTest() {
+void relationalOperatorTest() {
+    //! == test
+    {
+        std::vector<int> stdVec;
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec;
+        ft::vector<int> ftVec1;
 
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+
+        stdVec.push_back(1);
+        stdVec1.push_back(1);
+        ftVec.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+
+        stdVec.reserve(10);
+        stdVec1.reserve(10);
+        ftVec.reserve(10);
+        ftVec1.reserve(10);
+
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+
+        stdVec.resize(100);
+        stdVec1.resize(100);
+        ftVec.resize(100);
+        ftVec1.resize(100);
+
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+
+        stdVec.resize(1000, 9);
+        stdVec1.resize(1000, 9);
+        ftVec.resize(1000, 9);
+        ftVec1.resize(1000, 9);
+
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+    }
+    //! != test
+    {
+        std::vector<int> stdVec;
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec;
+        ft::vector<int> ftVec1;
+
+        assert((stdVec != stdVec1) == (ftVec != ftVec1));
+
+        stdVec.push_back(1);
+        stdVec1.push_back(1);
+        ftVec.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec != stdVec1) == (ftVec != ftVec1));
+
+        stdVec.reserve(10);
+        stdVec1.reserve(10);
+        ftVec.reserve(10);
+        ftVec1.reserve(10);
+
+        assert((stdVec != stdVec1) == (ftVec != ftVec1));
+
+        stdVec.resize(100);
+        stdVec1.resize(100);
+        ftVec.resize(100);
+        ftVec1.resize(100);
+
+        assert((stdVec != stdVec1) == (ftVec != ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec == stdVec1) == (ftVec == ftVec1));
+    }
+    //! < test
+    {
+        std::vector<int> stdVec;
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec;
+        ft::vector<int> ftVec1;
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+
+        stdVec.push_back(1);
+        stdVec.push_back(1);
+        ftVec.push_back(1);
+        ftVec.push_back(1);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+
+        stdVec1.push_back(10);
+        ftVec1.push_back(10);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+
+        stdVec.push_back(10);
+        ftVec.push_back(10);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+    }
+    //! <= test
+    {
+        std::vector<int> stdVec;
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec;
+        ft::vector<int> ftVec1;
+
+        assert((stdVec <= stdVec1) == (ftVec <= ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec <= stdVec1) == (ftVec <= ftVec1));
+
+        stdVec.push_back(1);
+        stdVec.push_back(1);
+        ftVec.push_back(1);
+        ftVec.push_back(1);
+
+        assert((stdVec <= stdVec1) == (ftVec <= ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec <= stdVec1) == (ftVec <= ftVec1));
+
+        stdVec1.push_back(10);
+        ftVec1.push_back(10);
+
+        assert((stdVec <= stdVec1) == (ftVec <= ftVec1));
+
+        stdVec.push_back(10);
+        ftVec.push_back(10);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+    }
+    //! > test
+    {
+        std::vector<int> stdVec;
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec;
+        ft::vector<int> ftVec1;
+
+        assert((stdVec > stdVec1) == (ftVec > ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec > stdVec1) == (ftVec > ftVec1));
+
+        stdVec.push_back(1);
+        stdVec.push_back(1);
+        ftVec.push_back(1);
+        ftVec.push_back(1);
+
+        assert((stdVec > stdVec1) == (ftVec > ftVec1));
+
+        stdVec1.push_back(10);
+        ftVec1.push_back(10);
+
+        assert((stdVec > stdVec1) == (ftVec > ftVec1));
+
+        stdVec.push_back(10);
+        ftVec.push_back(10);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+    }
+    //! >= test
+    {
+        std::vector<int> stdVec;
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec;
+        ft::vector<int> ftVec1;
+
+        assert((stdVec >= stdVec1) == (ftVec >= ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec >= stdVec1) == (ftVec >= ftVec1));
+
+        stdVec.push_back(1);
+        stdVec.push_back(1);
+        ftVec.push_back(1);
+        ftVec.push_back(1);
+
+        assert((stdVec >= stdVec1) == (ftVec >= ftVec1));
+
+        stdVec1.push_back(1);
+        ftVec1.push_back(1);
+
+        assert((stdVec >= stdVec1) == (ftVec >= ftVec1));
+
+        stdVec1.push_back(10);
+        ftVec1.push_back(10);
+
+        assert((stdVec >= stdVec1) == (ftVec >= ftVec1));
+
+        stdVec.push_back(10);
+        ftVec.push_back(10);
+
+        assert((stdVec < stdVec1) == (ftVec < ftVec1));
+    }
+    //! swap test
+    {
+        std::vector<int> stdVec(10, 100);
+        std::vector<int> stdVec1;
+        ft::vector<int> ftVec(10, 100);
+        ft::vector<int> ftVec1;
+
+        ft::swap(ftVec, ftVec1);
+        std::swap(stdVec, stdVec1);
+        asserter(stdVec1, ftVec1);
+        asserter(stdVec, ftVec);
+
+        ft::swap(ftVec, ftVec1);
+        std::swap(stdVec, stdVec1);
+        asserter(stdVec, ftVec);
+        asserter(stdVec1, ftVec1);
+    }
+}
+
+void exceptionSafetyTest() {
     {
         StdExceptVector stdVector;
         FtExceptVector ftVector;
@@ -601,7 +836,6 @@ void exceptionSafetyTest() {
 
         n *= 2;
         //todo если увеличить на 15, то capacity у стандартного вектора станет 20 почему-то
-
         try {
             ftVector.resize(n, std::string("bye"));
         } catch (...) {
@@ -627,21 +861,20 @@ void exceptionSafetyTest() {
         } catch(...) {
             asserter<StdExceptVector , FtExceptVector>(stdVector, ftVector);
         }
-
     }
 }
 
 void test() {
     std::vector<int> stdVec;
+    std::vector<int> stdVec1;
 
-    stdVec.push_back(1);
-    stdVec.push_back(2);
+    stdVec.push_back(100);
+    stdVec1.push_back(1);
+    stdVec1.push_back(1);
+    //stdVec.reserve(20);
+    assert(stdVec1 < stdVec);
 
-    stdVec.assign(3, 10);
 
-    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
-
-    //ft::vector<int> ftVec;
 }
 
 int main(void) {
@@ -665,8 +898,9 @@ int main(void) {
     dataTest();
     allocatorTest();
     exceptionSafetyTest();
+    relationalOperatorTest();
 
-    //test();
+    test();
 
     return (0);
 }

@@ -123,7 +123,7 @@ public:
         return capacity_;
     }
 
-    bool empty() {
+    bool empty() const {
         return size_ == 0;
     }
 
@@ -296,6 +296,91 @@ private:
         capacity_ = oldCapacity;
     }
 };
+
+
+//todo я перегрузил ператоры сравнения не через френд функции. Правильно ли это?
+template <class T, class Alloc>
+bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    if (lhs.size() != rhs.size()) {
+        return false;
+    }
+    for (typename vector<T, Alloc>::size_type i = 0; i != lhs.size(); ++i) {
+        if (lhs[i] != rhs[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <class T, class Alloc>
+bool operator != (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    return !(rhs == lhs);
+}
+
+template <class T, class Alloc>
+bool operator < (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    for (typename vector<T, Alloc>::size_type i = 0; ; ++ i) {
+        if (i == lhs.size() && i == rhs.size()) {
+            return false;
+        } else if ((i == lhs.size()) && (i != rhs.size())) {
+            return true;
+        } else if (i == rhs.size() && i != lhs.size()) {
+            return false;
+        } else if (lhs[i] != rhs[i]) {
+            return (lhs[i] < rhs[i]);
+        }
+    }
+}
+
+template <class T, class Alloc>
+bool operator <= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    for (typename vector<T, Alloc>::size_type i = 0; ; ++ i) {
+        if ((i == lhs.size()) && (i == rhs.size())) {
+            return true;
+        } else if ((i == lhs.size()) && (i != rhs.size())) {
+            return true;
+        } else if ((i == rhs.size()) && (i != lhs.size())) {
+            return false;
+        } else if (lhs[i] != rhs[i]) {
+            return (lhs[i] < rhs[i]);
+        }
+    }
+}
+
+template <class T, class Alloc>
+bool operator >= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    for (typename vector<T, Alloc>::size_type i = 0; ; ++ i) {
+        if ((i == lhs.size()) && (i == rhs.size())) {
+            return true;
+        } else if ((i == lhs.size()) && (i != rhs.size())) {
+            return false;
+        } else if ((i == rhs.size()) && (i != lhs.size())) {
+            return true;
+        } else if (lhs[i] != rhs[i]) {
+            return (lhs[i] > rhs[i]);
+        }
+    }
+}
+
+template <class T, class Alloc>
+bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    for (typename vector<T, Alloc>::size_type i = 0; ; ++ i) {
+        if ((i == lhs.size()) && (i == rhs.size())) {
+            return false;
+        } else if ((i == lhs.size()) && (i != rhs.size())) {
+            return false;
+        } else if ((i == rhs.size()) && (i != lhs.size())) {
+            return true;
+        } else if (lhs[i] != rhs[i]) {
+            return (lhs[i] > rhs[i]);
+        }
+    }
+}
+
+template <class T, class Alloc>
+void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
+    lhs.swap(rhs);
+}
 
 } //namespace ft
 
