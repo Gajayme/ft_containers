@@ -1,4 +1,4 @@
-#include "vector.hpp"
+#include "../vector/vector.hpp"
 #include <iostream>
 #include <assert.h>
 #include <vector>
@@ -867,13 +867,6 @@ void exceptionSafetyTest() {
 void test() {
     std::vector<int> stdVec;
     std::vector<int> stdVec1;
-
-    stdVec.push_back(100);
-    stdVec1.push_back(1);
-    stdVec1.push_back(1);
-    //stdVec.reserve(20);
-    assert(stdVec1 < stdVec);
-
 
 }
 

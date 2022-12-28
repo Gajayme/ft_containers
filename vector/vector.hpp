@@ -4,12 +4,48 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include "../iterators/iterator_traits.hpp"
 
 namespace ft {
 
 template <class T, typename Allocator = std::allocator<T> >
 class vector {
+
+    template<typename IT>
+    class random_access_iterator {
+    public:
+
+        typedef typename iterator_traits<IT>::difference_type difference_type;
+        typedef typename iterator_traits<IT>::value_type value_type;
+        typedef typename iterator_traits<IT>::pointer pointer;
+        typedef typename iterator_traits<IT>::reference reference;
+        typedef typename iterator_traits<IT>::iterator_category iterator_category;
+
+        random_access_iterator(IT *ptr = NULL):
+        ptr_(ptr) {
+        }
+
+        random_access_iterator(const random_access_iterator<IT> &other):
+        ptr_(other.ptr_) {
+        }
+        //todo по идее здесь вместо IT надо использовать затайпдефленные типы и что-то делать с константностью
+        random_access_iterator<IT> &operator =(const random_access_iterator<IT> &other) {
+            if (this != &other) {
+                ptr_ = other.ptr_;
+            }
+        }
+
+        ~random_access_iterator() {
+        }
+
+    private:
+            IT ptr_;
+    };
+
 public:
+
+    typedef random_access_iterator<T*> iterator;
+    typedef random_access_iterator<const T*> const_iterator;
 
     typedef T value_type;
     typedef Allocator allocator_type;
@@ -70,9 +106,6 @@ public:
         if (this == &other) {
             return *this;
         }
-//        for (size_type i = 0; i < size_; ++i) {
-//            allocator_.destroy(arr_ + i);
-//        }
         clear();
         if (arr_ != NULL) {
             allocator_.deallocate(arr_, capacity_);
@@ -90,25 +123,16 @@ public:
             }
         } catch (...) {
             //todo правильно ли здесь выставлены sz и cp после отлова исключения?
-//            for (size_type j = 0; j < i; ++j) {
-//                allocator_.destroy(arr_ + j);
-//            }
             clear();
             if (arr_ != NULL) {
                 allocator_.deallocate(arr_, capacity_);
             }
-            //todo нужно ли это?
-            //capacity_ = 0;
-            //size_ = 0;
             throw;
         }
         return *this;
     }
 
     ~vector(){
-//        for (size_type i = 0; i < size_; ++i) {
-//            allocator_.destroy(arr_ + i);
-//        }
         clear();
         if (arr_ != NULL) {
             allocator_.deallocate(arr_, capacity_);
@@ -297,8 +321,6 @@ private:
     }
 };
 
-
-//todo я перегрузил ператоры сравнения не через френд функции. Правильно ли это?
 template <class T, class Alloc>
 bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     if (lhs.size() != rhs.size()) {

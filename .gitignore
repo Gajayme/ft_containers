@@ -1,8 +1,9 @@
 *.o
 a.out
 .DS_Store
-test_stack.cpp
+tests/test_stack.cpp
 .vscode
 .idea
-*.gch
+*gch
 test.cpp
+containers
