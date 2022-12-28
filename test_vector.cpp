@@ -879,6 +879,7 @@ void test() {
 
 int main(void) {
 
+    std::cout << "Tests\n";
     constructorsTest();
     copyConstructorsTest();
     assignmentOperatorTest();
