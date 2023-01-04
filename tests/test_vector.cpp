@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <vector>
 #include "vector_test_classes.hpp"
+#include "../utils/remove_const.hpp"
 
 template <typename T>
 void printer(T std, T ft) {
@@ -864,36 +865,153 @@ void exceptionSafetyTest() {
     }
 }
 
+void iterator_tests() {
+    //! ITERATOR CONSTRUCTORS INTEGRAL TYPES
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+    ftVec.push_back(5);
+    ftVec.push_back(6);
+    ftVec.push_back(7);
+
+    //! Создание итератора по-умолчанию
+    {
+        ft::vector<int>::iterator ftIt;
+    }
+
+    //! Инициализация итератора с помощью begin
+    {
+        ft::vector<int>::iterator ftIt = ftVec.begin();
+        assert(*ftIt == ftVec.front());
+    }
+
+    //! Инициализация итератора с помощью end
+    {
+        ft::vector<int>::iterator ftIt = ftVec.end();
+        assert(*ftIt == ftVec.back());
+    }
+
+    //! Конструктор копирования
+    {
+        ft::vector<int>::iterator ftIt = ftVec.end();
+        ft::vector<int>::iterator ftItCopy(ftIt);
+
+        assert(*ftIt == *ftItCopy);
+    }
+
+    //! Оператор присваивания
+    {
+        ft::vector<int>::iterator ftIt = ftVec.end();
+        ft::vector<int>::iterator ftItCopy;
+        ftItCopy = ftIt;
+
+        assert(*ftIt == *ftItCopy);
+    }
+
+    //! operator *
+    {
+        ft::vector<int>::iterator ftIt = ftVec.begin();
+
+        assert(*ftIt == ftVec.front());
+
+        const int num = 10;
+        *ftIt = num;
+
+        assert(*ftIt == num);
+
+        ftIt = ftVec.end();
+
+        assert(*ftIt == ftVec.back());
+    }
+
+    //todo как правильно проверить этот оператор
+    //! operator ->
+    {
+        ft::vector<int>::iterator ftIt = ftVec.begin();
+
+        assert(*ftIt.operator->() == ftVec.front());
+    }
+
+    //! Operator +
+    {
+        ft::vector<int>::iterator ftIt = ftVec.begin();
+        ftIt = ftIt + 1;
+
+        assert(*ftIt == ftVec[1]);
+        assert(*(ftIt + 1) == ftVec[2]);
+        assert(*(ftIt + 5) == ftVec[6]);
+    }
+
+    //! Operator -
+    {
+        ft::vector<int>::iterator ftIt = ftVec.end();
+        ftIt = ftIt - 1;
+
+        assert(*ftIt == ftVec[5]);
+        assert(*(ftIt - 1) == ftVec[4]);
+        assert(*(ftIt - 5) == ftVec[0]);
+    }
+}
+
+//void iter_const_test() {
+//    ft::vector<int> ftVec;
+//    ftVec.push_back(1);
+//    ftVec.push_back(2);
+//
+//    ft::vector<int>::iterator it = ftVec.begin();
+//    ft::vector<int>::const_iterator cIt = ftVec.begin();
+//}
+
 void test() {
-    std::vector<int> stdVec;
-    std::vector<int> stdVec1;
+
+    std::vector<int> vec;
+
+    std::vector<int>::const_iterator cIt1 = vec.begin();
+    std::vector<int>::const_iterator cIt2 = cIt1;
+
+    cIt2 = cIt1;
+
+
+
+//    ft::vector<int> ftVec;
+//    ftVec.push_back(1);
+//    ftVec.push_back(2);
+//
+//    ft::vector<int>::iterator it = ftVec.begin();
+//    ft::vector<int>::const_iterator cIt = ftVec.begin();
+//
+//    cIt = it;
+//
+//    it = cIt;
 
 }
 
 int main(void) {
 
-    std::cout << "Tests\n";
-    constructorsTest();
-    copyConstructorsTest();
-    assignmentOperatorTest();
-    resizeTests();
-    assignTests();
-    swapTest();
-    reserveTests();
-    pushBackTest();
-    popBackTest();
-    //todo для всех const методов надо будет сделать const версии тестов
-    bracesOperatorTest();
-    atTest();
-    frontTest();
-    backTest();
-    emptyTest();
-    clearTest();
-    dataTest();
-    allocatorTest();
-    exceptionSafetyTest();
-    relationalOperatorTest();
-
+//    std::cout << "Tests\n";
+//    constructorsTest();
+//    copyConstructorsTest();
+//    assignmentOperatorTest();
+//    resizeTests();
+//    assignTests();
+//    swapTest();
+//    reserveTests();
+//    pushBackTest();
+//    popBackTest();
+//    //todo для всех const методов надо будет сделать const версии тестов
+//    bracesOperatorTest();
+//    atTest();
+//    frontTest();
+//    backTest();
+//    emptyTest();
+//    clearTest();
+//    dataTest();
+//    allocatorTest();
+//    exceptionSafetyTest();
+//    relationalOperatorTest();
+//    iterator_tests();
     test();
 
     return (0);

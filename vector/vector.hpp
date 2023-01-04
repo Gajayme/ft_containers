@@ -4,7 +4,9 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
-#include "../iterators/iterator_traits.hpp"
+#include "../utils/iterator_traits.hpp"
+#include "../utils/remove_const.hpp"
+#include "../utils/enable_if.hpp"
 
 namespace ft {
 
@@ -15,37 +17,137 @@ class vector {
     class random_access_iterator {
     public:
 
-        typedef typename iterator_traits<IT>::difference_type difference_type;
-        typedef typename iterator_traits<IT>::value_type value_type;
-        typedef typename iterator_traits<IT>::pointer pointer;
-        typedef typename iterator_traits<IT>::reference reference;
-        typedef typename iterator_traits<IT>::iterator_category iterator_category;
+        //todo remove const
+        typedef ptrdiff_t difference_type ;
+        typedef typename ft::remove_const<T>::type value_type;
+        typedef value_type* pointer;
+        typedef value_type& reference;
+        typedef std::random_access_iterator_tag iterator_category;
 
-        random_access_iterator(IT *ptr = NULL):
+        /*!
+         * Конструктор по умолчанию
+         */
+        random_access_iterator(const pointer ptr = NULL):
         ptr_(ptr) {
         }
 
-        random_access_iterator(const random_access_iterator<IT> &other):
-        ptr_(other.ptr_) {
+        template <typename Iter>
+        random_access_iterator(const random_access_iterator<Iter>& other,
+                 typename ft::enable_if<std::is_convertible<Iter, IT>::value>::type* = 0)
+                : ptr_(other.operator->()) {
+
+        };
+
+//        random_access_iterator(const random_access_iterator &other):
+//        ptr_(other.ptr_) {
+//        }
+
+        random_access_iterator& operator= (const random_access_iterator<typename ft::remove_const<IT>::type> &x) {
+            ptr_ = x.operator->();
+            return *this;
         }
-        //todo по идее здесь вместо IT надо использовать затайпдефленные типы и что-то делать с константностью
-        random_access_iterator<IT> &operator =(const random_access_iterator<IT> &other) {
-            if (this != &other) {
-                ptr_ = other.ptr_;
-            }
-        }
+
+//        random_access_iterator &operator =(const random_access_iterator &other) {
+//            if (this != &other) {
+//                ptr_ = other.ptr_;
+//            }
+//            return *this;
+//        }
 
         ~random_access_iterator() {
         }
 
+        reference operator *() const {
+            return (*ptr_);
+        }
+
+        pointer operator ->() const {
+            return (ptr_);
+        }
+
+        //todo правильно ли реализованы эти методы. Проверить
+        random_access_iterator operator +(const difference_type n) {
+            return random_access_iterator(ptr_ + n);
+        }
+
+        random_access_iterator operator -(const difference_type n) {
+            return random_access_iterator(ptr_ - n);
+        }
+
+        random_access_iterator &operator +=(const difference_type n) {
+            ptr_ += n;
+            return *this;
+        }
+
+        random_access_iterator &operator -=(const difference_type n) {
+            ptr_ -= n;
+            return *this;
+        }
+
+        random_access_iterator &operator --() {
+            --ptr_;
+            return *this;
+        }
+
+        random_access_iterator operator --(int) {
+            random_access_iterator tmp(ptr_);
+            --ptr_;
+            return tmp;
+        }
+
+        random_access_iterator &operator ++() {
+            ++ptr_;
+            return *this;
+        }
+
+        random_access_iterator operator ++(int) {
+            random_access_iterator tmp(ptr_);
+            ++ptr_;
+            return tmp;
+        }
+
+        //todo нужна ли константная версия такого оператора?
+        reference operator[](const difference_type n) const {
+            return *(ptr_ + n);
+        }
+
+        difference_type operator -(random_access_iterator &other) const {
+            return ptr_ - other.ptr_;
+        }
+
+        difference_type operator +(random_access_iterator &other) const {
+            return ptr_ + other.ptr_;
+        }
+
+        bool operator ==(const random_access_iterator &other) const {
+            return ptr_ == other.ptr_;
+        }
+
+        bool operator != (const random_access_iterator &other) const {
+            return ptr_ != other.ptr_;
+        }
+
+        bool operator > (const random_access_iterator &other) const {
+            return ptr_ > other.ptr_;
+        }
+
+        bool operator < (const random_access_iterator &other) const {
+            return ptr_ < other.ptr_;
+        }
+
+        bool operator >= (const random_access_iterator &other) const {
+            return ptr_ >= other.ptr_;
+        }
+        //todo во всех Методах сравнения у Даниила шаблонные параметры. Зачем??
+        bool operator <= (const random_access_iterator &other) const {
+            return ptr_ <= other.ptr_;
+        }
+
     private:
-            IT ptr_;
+            pointer ptr_;
     };
 
 public:
-
-    typedef random_access_iterator<T*> iterator;
-    typedef random_access_iterator<const T*> const_iterator;
 
     typedef T value_type;
     typedef Allocator allocator_type;
@@ -55,6 +157,25 @@ public:
     typedef typename allocator_type::const_pointer const_pointer;
     typedef std::size_t size_type;
 
+    typedef random_access_iterator<value_type> iterator;
+    typedef random_access_iterator<const value_type> const_iterator;
+
+
+    iterator begin() {
+        return iterator (arr_);
+    }
+
+    iterator end() {
+        return iterator(arr_ + size_);
+    }
+
+    const_iterator begin() const {
+        return const_iterator(arr_);
+    }
+
+    const_iterator end() const {
+        return const_iterator(arr_ + size_);
+    }
 
     explicit vector (const allocator_type &alloc = allocator_type()):
     arr_(NULL),
@@ -69,7 +190,7 @@ public:
     capacity_(0),
     allocator_(alloc) {
         resize (n, value);
-    };
+    }
 
     //todo может так??
 //    vector (const vector& x) :  _size(0), _capacity(0){
@@ -101,7 +222,7 @@ public:
             throw;
         }
     }
-    //todo тут можно немного оптимизировать просто переприсваивая элементы (в случае, если присваиваем к меньшему вектору), а не удаляя их
+    //todo тут можно немного оптимизировать переприсваиванием элементов (в случае, если присваиваем к меньшему вектору), а не удаляя их
     vector& operator= (const vector& other) {
         if (this == &other) {
             return *this;
@@ -180,7 +301,6 @@ public:
         if (n > capacity_) {
             reserve(n);
         }
-        //todo правильно ли здесь реализована обработка исключений?
         size_type i = size_;
         try {
             for (; i < n; ++i) {
@@ -228,7 +348,6 @@ public:
         if (capacity_ == size_) {
             reserve (size_ == 0 ? 1 : (size_ * 2));
         }
-        //todo правильно ли здесь реализована обработка исключений?
         try {
             allocator_.construct(arr_ + size_, value_type (value));
         } catch(...) {
@@ -287,7 +406,6 @@ public:
         return arr_[size_ - 1];
     }
 
-
 private:
     pointer arr_;
     size_type size_;
@@ -310,7 +428,7 @@ private:
             }
             throw;
         }
-        for (size_type i = 0; i <  size_; ++i) {
+        for (i = 0; i <  size_; ++i) {
             allocator_.destroy(arr_ + i);
         }
         if (arr_ != NULL) {
