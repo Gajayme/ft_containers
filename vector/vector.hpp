@@ -7,141 +7,228 @@
 #include "../utils/iterator_traits.hpp"
 #include "../utils/remove_const.hpp"
 #include "../utils/enable_if.hpp"
+#include "../utils/conditional.hpp"
 
 namespace ft {
 
 template <class T, typename Allocator = std::allocator<T> >
 class vector {
 
-    template<typename IT>
+    template<bool IsConst>
     class random_access_iterator {
     public:
 
-        //todo remove const
-        typedef ptrdiff_t difference_type ;
-        typedef typename ft::remove_const<T>::type value_type;
-        typedef value_type* pointer;
-        typedef value_type& reference;
+        typedef std::ptrdiff_t difference_type ;
+        typedef T value_type;
+        typedef T* pointer;
+        typedef T& reference;
         typedef std::random_access_iterator_tag iterator_category;
 
         /*!
-         * Конструктор по умолчанию
+         * Конструктор итератора по умолчанию
          */
         random_access_iterator(const pointer ptr = NULL):
         ptr_(ptr) {
+                //std::cout << "default" << std::endl;
         }
 
-        template <typename Iter>
-        random_access_iterator(const random_access_iterator<Iter>& other,
-                 typename ft::enable_if<std::is_convertible<Iter, IT>::value>::type* = 0)
-                : ptr_(other.operator->()) {
-
-        };
-
-//        random_access_iterator(const random_access_iterator &other):
-//        ptr_(other.ptr_) {
-//        }
-
-        random_access_iterator& operator= (const random_access_iterator<typename ft::remove_const<IT>::type> &x) {
+        /*!
+         * Конструктор копирования итератора
+         */
+        template <bool B>
+        random_access_iterator (const random_access_iterator<B> & x, typename ft::enable_if<!B>::type* = 0) {
+            //std::cout << "copy" << std::endl;
             ptr_ = x.operator->();
-            return *this;
         }
 
-//        random_access_iterator &operator =(const random_access_iterator &other) {
-//            if (this != &other) {
-//                ptr_ = other.ptr_;
-//            }
-//            return *this;
-//        }
+        /*!
+         * Оператор присваивания итератора
+         */
+        template<bool B>
+        random_access_iterator& operator=(const random_access_iterator<B> &x) {
+            //std::cout << "assign" << std::endl;
+            ptr_ = x.operator->();
+            return (*this);
+        }
 
+        /*!
+         * Деструктор итератора
+         */
         ~random_access_iterator() {
         }
 
-        reference operator *() const {
+    private:
+        typedef typename ft::conditional<IsConst, const T, value_type>::value conditional_value;
+        typedef typename ft::conditional<IsConst, const T&, reference>::value conditional_reference;
+        typedef typename ft::conditional<IsConst, const T*, pointer>::value conditional_pointer;
+
+    public:
+
+        //------------------------------
+        // ОПЕРАТОРЫ ДОСТУПА К УКАЗАТЕЛЮ
+        //------------------------------
+
+        /*!
+         * Оператор звездочка
+         */
+        conditional_reference operator *() const {
             return (*ptr_);
         }
 
-        pointer operator ->() const {
+        /*!
+         * Оператор стрелочка
+         */
+        conditional_pointer operator ->() const {
             return (ptr_);
         }
 
-        //todo правильно ли реализованы эти методы. Проверить
-        random_access_iterator operator +(const difference_type n) {
-            return random_access_iterator(ptr_ + n);
+        //--------------------
+        // ОПЕРАТОРЫ СРАВНЕНИЯ
+        //--------------------
+
+        /*!
+         * Оператор ==
+         */
+        template<bool B>
+        bool operator ==(const random_access_iterator<B> &other) const {
+            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+                return false;
+            }
+            return ptr_ == other.operator->();
         }
 
-        random_access_iterator operator -(const difference_type n) {
-            return random_access_iterator(ptr_ - n);
+        /*!
+         * Оператор !=
+         */
+        template <bool B>
+        bool operator != (const random_access_iterator<B> &other) const {
+            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+                return true;
+            }
+            return ptr_ != other.operator->();
         }
 
+        /*!
+         * Оператор >
+         */
+        template<bool B>
+        bool operator > (const random_access_iterator<B> &other) const {
+            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+                return false;
+            }
+            return ptr_ > other.operator->();
+        }
+
+        /*!
+         * Оператор <
+         */
+        template<bool B>
+        bool operator < (const random_access_iterator<B> &other) const {
+            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+                return false;
+            }
+            return ptr_ < other.ptr_;
+        }
+
+        /*!
+         * Оператор >=
+         */
+        template<bool B>
+        bool operator >= (const random_access_iterator<B> &other) const {
+            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+                return false;
+            }
+            return ptr_ >= other.operator->();
+        }
+
+        /*!
+         * Оператор <=
+         */
+        template<bool B>
+        bool operator <= (const random_access_iterator<B> &other) const {
+            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+                return false;
+            }
+            return ptr_ <= other.operator->();
+        }
+
+        //------------------------------------------------------
+        // ОПЕРАТОРЫ ИНКРЕМЕНТА, ДЕКРЕМЕНТА, +/- int , +=/-= int
+        //------------------------------------------------------
+
+        /*!
+        * Оператор iter + int
+        */
+        random_access_iterator<IsConst> operator +(const difference_type n) {
+            return random_access_iterator<IsConst>(ptr_ + n);
+        }
+
+        /*!
+        * Оператор -
+        */
+        random_access_iterator<IsConst> operator -(const difference_type n) {
+            return random_access_iterator<IsConst>(ptr_ - n);
+        }
+
+//        /*!
+//        * Оператор int - iter
+//        */
+//        random_access_iterator<IsConst> friend operator +(const difference_type n, random_access_iterator<IsConst> &iter) {
+//            return random_access_iterator<IsConst>(iter.operator->() + n);
+//        }
+//
+
+        /*!
+        * Оператор +=
+        */
         random_access_iterator &operator +=(const difference_type n) {
             ptr_ += n;
             return *this;
         }
 
+        /*!
+        * Оператор -=
+        */
         random_access_iterator &operator -=(const difference_type n) {
             ptr_ -= n;
             return *this;
         }
-
-        random_access_iterator &operator --() {
-            --ptr_;
-            return *this;
-        }
-
-        random_access_iterator operator --(int) {
-            random_access_iterator tmp(ptr_);
-            --ptr_;
-            return tmp;
-        }
-
-        random_access_iterator &operator ++() {
-            ++ptr_;
-            return *this;
-        }
-
-        random_access_iterator operator ++(int) {
-            random_access_iterator tmp(ptr_);
-            ++ptr_;
-            return tmp;
-        }
-
-        //todo нужна ли константная версия такого оператора?
-        reference operator[](const difference_type n) const {
-            return *(ptr_ + n);
-        }
-
-        difference_type operator -(random_access_iterator &other) const {
-            return ptr_ - other.ptr_;
-        }
-
-        difference_type operator +(random_access_iterator &other) const {
-            return ptr_ + other.ptr_;
-        }
-
-        bool operator ==(const random_access_iterator &other) const {
-            return ptr_ == other.ptr_;
-        }
-
-        bool operator != (const random_access_iterator &other) const {
-            return ptr_ != other.ptr_;
-        }
-
-        bool operator > (const random_access_iterator &other) const {
-            return ptr_ > other.ptr_;
-        }
-
-        bool operator < (const random_access_iterator &other) const {
-            return ptr_ < other.ptr_;
-        }
-
-        bool operator >= (const random_access_iterator &other) const {
-            return ptr_ >= other.ptr_;
-        }
-        //todo во всех Методах сравнения у Даниила шаблонные параметры. Зачем??
-        bool operator <= (const random_access_iterator &other) const {
-            return ptr_ <= other.ptr_;
-        }
+//
+//        random_access_iterator &operator --() {
+//            --ptr_;
+//            return *this;
+//        }
+//
+//        random_access_iterator operator --(int) {
+//            random_access_iterator tmp(ptr_);
+//            --ptr_;
+//            return tmp;
+//        }
+//
+//        random_access_iterator &operator ++() {
+//            ++ptr_;
+//            return *this;
+//        }
+//
+//        random_access_iterator operator ++(int) {
+//            random_access_iterator tmp(ptr_);
+//            ++ptr_;
+//            return tmp;
+//        }
+//
+//        //todo нужна ли константная версия такого оператора?
+//        reference operator[](const difference_type n) const {
+//            return *(ptr_ + n);
+//        }
+//
+//        difference_type operator -(random_access_iterator &other) const {
+//            return ptr_ - other.ptr_;
+//        }
+//
+//        difference_type operator +(random_access_iterator &other) const {
+//            return ptr_ + other.ptr_;
+//        }
+//
 
     private:
             pointer ptr_;
@@ -157,9 +244,8 @@ public:
     typedef typename allocator_type::const_pointer const_pointer;
     typedef std::size_t size_type;
 
-    typedef random_access_iterator<value_type> iterator;
-    typedef random_access_iterator<const value_type> const_iterator;
-
+    typedef random_access_iterator<false> iterator;
+    typedef random_access_iterator<true> const_iterator;
 
     iterator begin() {
         return iterator (arr_);
@@ -169,13 +255,15 @@ public:
         return iterator(arr_ + size_);
     }
 
-    const_iterator begin() const {
-        return const_iterator(arr_);
-    }
 
-    const_iterator end() const {
-        return const_iterator(arr_ + size_);
-    }
+    //todo возможно эти методы вообще не нужны
+//    const_iterator begin() const {
+//        return const_iterator(arr_);
+//    }
+//
+//    const_iterator end() const {
+//        return const_iterator(arr_ + size_);
+//    }
 
     explicit vector (const allocator_type &alloc = allocator_type()):
     arr_(NULL),
@@ -517,7 +605,7 @@ bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     }
 }
 
-template <class T, class Alloc>
+template <typename T, typename Alloc>
 void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
     lhs.swap(rhs);
 }
