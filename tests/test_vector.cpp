@@ -1157,13 +1157,6 @@ void iterPlusMinusInt () {
 
     it = vec.begin();
     cit = vec.begin();
-
-    it = 1 + it;
-    cit = 1 + cit;
-//    assert(*it == 1);
-//    assert(it == cit);
-//    assert(it == vec.begin());
-//    assert(cit == vec.begin());
 }
 
 void iterPlusMinusEqualTest() {
@@ -1202,23 +1195,77 @@ void iterPlusMinusEqualTest() {
     assert(cit == vec.begin());
 }
 
-
-void test() {
-    std::vector<int> vec;
-    vec.push_back(100);
+void iterIncrementDecrementTest() {
+    ft::vector<int> vec;
+    vec.push_back(1);
     vec.push_back(2);
     vec.push_back(3);
 
-    //std::vector<int>::iterator it1 = vec.begin();
-    std::vector<int>::const_iterator it2 = vec.begin();
-    std::vector<int>::const_iterator it3;
-    std::vector<int>::const_iterator it4;
+    ft::vector<int>::iterator it = vec.begin();
+    ft::vector<int>::const_iterator cit = vec.begin();
 
-    std::cout << *(1 + it2) << std::endl;
+    ++it;
+    ++cit;
 
-    it2++;
+    assert(*it == 2);
+    assert(it == cit);
 
-    std::cout << (it4 == it3) << std::endl;
+    assert(*(it++) == 2);
+    assert(*(cit++) == 2);
+
+    assert(*it == 3);
+    assert(it == cit);
+
+    --it;
+    --cit;
+    assert(*it == 2);
+    assert(it == cit);
+
+    assert(*(it--) == 2);
+    assert(*(cit--) == 2);
+
+    assert(*it == 1);
+    assert(it == cit);
+
+    ++it;
+    ++it;
+    ++it;
+    ++cit;
+    ++cit;
+    ++cit;
+    assert(it == vec.end());
+    assert(cit == vec.end());
+}
+
+void test() {
+//    std::vector<int> vec;
+//    vec.push_back(100);
+//    vec.push_back(2);
+//    vec.push_back(3);
+//
+//    //std::vector<int>::iterator it1 = vec.begin();
+//    std::vector<int>::const_iterator it2 = vec.begin();
+//    std::vector<int>::const_iterator it3;
+//    std::vector<int>::const_iterator it4;
+//
+//    std::cout << *(1 + it2) << std::endl;
+//
+//    it2++;
+//
+//    std::cout << (it4 == it3) << std::endl;
+
+
+    ft::vector<int> vec;
+    vec.push_back(1);
+    vec.push_back(2);
+    vec.push_back(3);
+
+    ft::vector<int>::iterator it = vec.begin();
+    ft::vector<int>::const_iterator cit = vec.begin();
+
+    std::cout << *(1 + it) <<std::endl;
+    std::cout << *(1 + cit) <<std::endl;
+
 }
 
 int main(void) {
@@ -1253,7 +1300,8 @@ int main(void) {
     iterMoreLessEqualTest();
     iterPlusMinusInt();
     iterPlusMinusEqualTest();
-    //test();
+    iterIncrementDecrementTest();
+    test();
 
     return (0);
 }

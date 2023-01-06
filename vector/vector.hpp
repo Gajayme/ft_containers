@@ -170,13 +170,13 @@ class vector {
             return random_access_iterator<IsConst>(ptr_ - n);
         }
 
-//        /*!
-//        * Оператор int - iter
-//        */
-//        random_access_iterator<IsConst> friend operator +(const difference_type n, random_access_iterator<IsConst> &iter) {
-//            return random_access_iterator<IsConst>(iter.operator->() + n);
-//        }
-//
+        /*!
+         * Оператор int + iter
+         */
+        random_access_iterator<IsConst> friend operator+(const int n, const random_access_iterator<IsConst> &iter) {
+            random_access_iterator<IsConst> copy = iter;
+            return (copy + n);
+        }
 
         /*!
         * Оператор +=
@@ -193,29 +193,30 @@ class vector {
             ptr_ -= n;
             return *this;
         }
-//
-//        random_access_iterator &operator --() {
-//            --ptr_;
-//            return *this;
-//        }
-//
-//        random_access_iterator operator --(int) {
-//            random_access_iterator tmp(ptr_);
-//            --ptr_;
-//            return tmp;
-//        }
-//
-//        random_access_iterator &operator ++() {
-//            ++ptr_;
-//            return *this;
-//        }
-//
-//        random_access_iterator operator ++(int) {
-//            random_access_iterator tmp(ptr_);
-//            ++ptr_;
-//            return tmp;
-//        }
-//
+
+        random_access_iterator &operator --() {
+            --ptr_;
+            return *this;
+        }
+
+
+        random_access_iterator operator --(int) {
+            random_access_iterator tmp(ptr_);
+            --ptr_;
+            return tmp;
+        }
+
+        random_access_iterator &operator ++() {
+            ++ptr_;
+            return *this;
+        }
+
+        random_access_iterator operator ++(int) {
+            random_access_iterator tmp(ptr_);
+            ++ptr_;
+            return tmp;
+        }
+
 //        //todo нужна ли константная версия такого оператора?
 //        reference operator[](const difference_type n) const {
 //            return *(ptr_ + n);
@@ -604,6 +605,17 @@ bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
         }
     }
 }
+
+//template <typename T>
+//typename vector<T>::iterator operator+(typename vector<T>::size_type n, typename vector<T>::iterator &iter) {
+//    return typename vector<T>::iterator((iter.operator->() + n));
+//}
+//
+//template <typename T>
+//typename vector<T>::iterator operator+(typename vector<T>::size_type n, typename vector<T>::const_iterator &iter) {
+//    return typename vector<T>::const_iterator ((iter.operator->() + n));
+//}
+
 
 template <typename T, typename Alloc>
 void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
