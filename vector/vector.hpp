@@ -8,6 +8,7 @@
 #include "../utils/remove_const.hpp"
 #include "../utils/enable_if.hpp"
 #include "../utils/conditional.hpp"
+#include "../utils/lexicographical_compare.hpp"
 
 namespace ft {
 
@@ -91,9 +92,9 @@ class vector {
          */
         template<bool B>
         bool operator ==(const random_access_iterator<B> &other) const {
-            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-                return false;
-            }
+//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+//                return false;
+//            }
             return ptr_ == other.operator->();
         }
 
@@ -102,9 +103,9 @@ class vector {
          */
         template <bool B>
         bool operator != (const random_access_iterator<B> &other) const {
-            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-                return true;
-            }
+//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+//                return true;
+//            }
             return ptr_ != other.operator->();
         }
 
@@ -113,9 +114,9 @@ class vector {
          */
         template<bool B>
         bool operator > (const random_access_iterator<B> &other) const {
-            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-                return false;
-            }
+//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+//                return false;
+//            }
             return ptr_ > other.operator->();
         }
 
@@ -124,9 +125,9 @@ class vector {
          */
         template<bool B>
         bool operator < (const random_access_iterator<B> &other) const {
-            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-                return false;
-            }
+//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+//                return false;
+//            }
             return ptr_ < other.ptr_;
         }
 
@@ -135,9 +136,9 @@ class vector {
          */
         template<bool B>
         bool operator >= (const random_access_iterator<B> &other) const {
-            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-                return false;
-            }
+//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+//                return false;
+//            }
             return ptr_ >= other.operator->();
         }
 
@@ -146,9 +147,9 @@ class vector {
          */
         template<bool B>
         bool operator <= (const random_access_iterator<B> &other) const {
-            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-                return false;
-            }
+//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
+//                return false;
+//            }
             return ptr_ <= other.operator->();
         }
 
@@ -157,15 +158,15 @@ class vector {
         //------------------------------------------------------
 
         /*!
-        * Оператор iter + int
-        */
+         * Оператор iter + int
+         */
         random_access_iterator<IsConst> operator +(const difference_type n) {
             return random_access_iterator<IsConst>(ptr_ + n);
         }
 
         /*!
-        * Оператор -
-        */
+         * Оператор -
+         */
         random_access_iterator<IsConst> operator -(const difference_type n) {
             return random_access_iterator<IsConst>(ptr_ - n);
         }
@@ -179,57 +180,69 @@ class vector {
         }
 
         /*!
-        * Оператор +=
-        */
-        random_access_iterator &operator +=(const difference_type n) {
+         * Оператор +=
+         */
+        random_access_iterator<IsConst> &operator +=(const difference_type n) {
             ptr_ += n;
             return *this;
         }
 
         /*!
-        * Оператор -=
-        */
-        random_access_iterator &operator -=(const difference_type n) {
+         * Оператор -=
+         */
+        random_access_iterator<IsConst> &operator -=(const difference_type n) {
             ptr_ -= n;
             return *this;
         }
 
-        random_access_iterator &operator --() {
+        /*!
+         * Префиксный оператор --
+         */
+        random_access_iterator<IsConst> &operator --() {
             --ptr_;
             return *this;
         }
 
-
-        random_access_iterator operator --(int) {
-            random_access_iterator tmp(ptr_);
+        /*!
+         * Постфиксный оператор --
+         */
+        random_access_iterator<IsConst> operator --(int) {
+            random_access_iterator<IsConst> tmp(ptr_);
             --ptr_;
             return tmp;
         }
 
-        random_access_iterator &operator ++() {
+        /*!
+         *  Префиксный оператор ++
+         */
+        random_access_iterator<IsConst> &operator ++() {
             ++ptr_;
             return *this;
         }
 
+        /*!
+         *  Постфиксный оператор ++
+         */
         random_access_iterator operator ++(int) {
-            random_access_iterator tmp(ptr_);
+            random_access_iterator<IsConst> tmp(ptr_);
             ++ptr_;
             return tmp;
         }
 
-//        //todo нужна ли константная версия такого оператора?
-//        reference operator[](const difference_type n) const {
-//            return *(ptr_ + n);
-//        }
-//
-//        difference_type operator -(random_access_iterator &other) const {
-//            return ptr_ - other.ptr_;
-//        }
-//
-//        difference_type operator +(random_access_iterator &other) const {
-//            return ptr_ + other.ptr_;
-//        }
-//
+        /*!
+         *  Оператор []
+         */
+        conditional_reference operator[](const difference_type n) const {
+            return *(ptr_ + n);
+        }
+
+        /*!
+         *  Оператор - (iter - iter)
+         */
+        template<bool B>
+        difference_type operator -(random_access_iterator<B> &other) const {
+            return ptr_ - other.operator->();
+        }
 
     private:
             pointer ptr_;
@@ -258,13 +271,13 @@ public:
 
 
     //todo возможно эти методы вообще не нужны
-//    const_iterator begin() const {
-//        return const_iterator(arr_);
-//    }
-//
-//    const_iterator end() const {
-//        return const_iterator(arr_ + size_);
-//    }
+    const_iterator begin() const {
+        return const_iterator(arr_);
+    }
+
+    const_iterator end() const {
+        return const_iterator(arr_ + size_);
+    }
 
     explicit vector (const allocator_type &alloc = allocator_type()):
     arr_(NULL),
@@ -548,17 +561,7 @@ bool operator != (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 
 template <class T, class Alloc>
 bool operator < (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-    for (typename vector<T, Alloc>::size_type i = 0; ; ++ i) {
-        if (i == lhs.size() && i == rhs.size()) {
-            return false;
-        } else if ((i == lhs.size()) && (i != rhs.size())) {
-            return true;
-        } else if (i == rhs.size() && i != lhs.size()) {
-            return false;
-        } else if (lhs[i] != rhs[i]) {
-            return (lhs[i] < rhs[i]);
-        }
-    }
+    return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <class T, class Alloc>
@@ -592,30 +595,9 @@ bool operator >= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 }
 
 template <class T, class Alloc>
-bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-    for (typename vector<T, Alloc>::size_type i = 0; ; ++ i) {
-        if ((i == lhs.size()) && (i == rhs.size())) {
-            return false;
-        } else if ((i == lhs.size()) && (i != rhs.size())) {
-            return false;
-        } else if ((i == rhs.size()) && (i != lhs.size())) {
-            return true;
-        } else if (lhs[i] != rhs[i]) {
-            return (lhs[i] > rhs[i]);
-        }
-    }
+bool operator > (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+    return (rhs < lhs);
 }
-
-//template <typename T>
-//typename vector<T>::iterator operator+(typename vector<T>::size_type n, typename vector<T>::iterator &iter) {
-//    return typename vector<T>::iterator((iter.operator->() + n));
-//}
-//
-//template <typename T>
-//typename vector<T>::iterator operator+(typename vector<T>::size_type n, typename vector<T>::const_iterator &iter) {
-//    return typename vector<T>::const_iterator ((iter.operator->() + n));
-//}
-
 
 template <typename T, typename Alloc>
 void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){

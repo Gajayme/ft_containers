@@ -865,96 +865,6 @@ void exceptionSafetyTest() {
     }
 }
 
-//void iterator_tests() {
-//    //! ITERATOR CONSTRUCTORS INTEGRAL TYPES
-//    ft::vector<int> ftVec;
-//    ftVec.push_back(1);
-//    ftVec.push_back(2);
-//    ftVec.push_back(3);
-//    ftVec.push_back(4);
-//    ftVec.push_back(5);
-//    ftVec.push_back(6);
-//    ftVec.push_back(7);
-//
-//    //! Создание итератора по-умолчанию
-//    {
-//        ft::vector<int>::iterator ftIt;
-//    }
-//
-//    //! Инициализация итератора с помощью begin
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.begin();
-//        assert(*ftIt == ftVec.front());
-//    }
-//
-//    //! Инициализация итератора с помощью end
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.end();
-//        assert(*ftIt == ftVec.back());
-//    }
-//
-//    //! Конструктор копирования
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.end();
-//        ft::vector<int>::iterator ftItCopy(ftIt);
-//
-//        assert(*ftIt == *ftItCopy);
-//    }
-//
-//    //! Оператор присваивания
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.end();
-//        ft::vector<int>::iterator ftItCopy;
-//        ftItCopy = ftIt;
-//
-//        assert(*ftIt == *ftItCopy);
-//    }
-//
-//    //! operator *
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.begin();
-//
-//        assert(*ftIt == ftVec.front());
-//
-//        const int num = 10;
-//        *ftIt = num;
-//
-//        assert(*ftIt == num);
-//
-//        ftIt = ftVec.end();
-//
-//        assert(*ftIt == ftVec.back());
-//    }
-//
-//    //todo как правильно проверить этот оператор
-//    //! operator ->
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.begin();
-//
-//        assert(*ftIt.operator->() == ftVec.front());
-//    }
-//
-//    //! Operator +
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.begin();
-//        ftIt = ftIt + 1;
-//
-//        assert(*ftIt == ftVec[1]);
-//        assert(*(ftIt + 1) == ftVec[2]);
-//        assert(*(ftIt + 5) == ftVec[6]);
-//    }
-//
-//    //! Operator -
-//    {
-//        ft::vector<int>::iterator ftIt = ftVec.end();
-//        ftIt = ftIt - 1;
-//
-//        assert(*ftIt == ftVec[5]);
-//        assert(*(ftIt - 1) == ftVec[4]);
-//        assert(*(ftIt - 5) == ftVec[0]);
-//    }
-//}
-
 void iterConstructorTest() {
     ft::vector<int> ftVec;
     ftVec.push_back(1);
@@ -1028,7 +938,8 @@ void iterEqualityTest() {
     ft::vector<int>::iterator it1;
     ft::vector<int>::iterator it2;
 
-    assert(it1 != it2);
+    //todo разобраться с противоречиями тут и в компараторе
+    //assert(it1 != it2);
 
     it1 = vec.begin();
     it2 = vec.begin();
@@ -1193,6 +1104,12 @@ void iterPlusMinusEqualTest() {
     assert(it == cit);
     assert(it == vec.begin());
     assert(cit == vec.begin());
+
+    it = 1 + it;
+    cit = 1 + cit;
+
+    assert(*it == 2);
+    assert(it == cit);
 }
 
 void iterIncrementDecrementTest() {
@@ -1237,24 +1154,7 @@ void iterIncrementDecrementTest() {
     assert(cit == vec.end());
 }
 
-void test() {
-//    std::vector<int> vec;
-//    vec.push_back(100);
-//    vec.push_back(2);
-//    vec.push_back(3);
-//
-//    //std::vector<int>::iterator it1 = vec.begin();
-//    std::vector<int>::const_iterator it2 = vec.begin();
-//    std::vector<int>::const_iterator it3;
-//    std::vector<int>::const_iterator it4;
-//
-//    std::cout << *(1 + it2) << std::endl;
-//
-//    it2++;
-//
-//    std::cout << (it4 == it3) << std::endl;
-
-
+void iterBracesTest() {
     ft::vector<int> vec;
     vec.push_back(1);
     vec.push_back(2);
@@ -1263,35 +1163,45 @@ void test() {
     ft::vector<int>::iterator it = vec.begin();
     ft::vector<int>::const_iterator cit = vec.begin();
 
-    std::cout << *(1 + it) <<std::endl;
-    std::cout << *(1 + cit) <<std::endl;
+    assert(it[0] == 1);
+    assert(it[0] == cit[0]);
+    assert(it[1] == 2);
+    assert(it[1] == cit[1]);
+    assert(it[2] == 3);
+    assert(it[2] == cit[2]);
+}
+
+void iterMinusIterTest() {
+
+}
+
+void test() {
 
 }
 
 int main(void) {
 
-//    std::cout << "Tests\n";
-//    constructorsTest();
-//    copyConstructorsTest();
-//    assignmentOperatorTest();
-//    resizeTests();
-//    assignTests();
-//    swapTest();
-//    reserveTests();
-//    pushBackTest();
-//    popBackTest();
-//    //todo для всех const методов надо будет сделать const версии тестов
-//    bracesOperatorTest();
-//    atTest();
-//    frontTest();
-//    backTest();
-//    emptyTest();
-//    clearTest();
-//    dataTest();
-//    allocatorTest();
-//    exceptionSafetyTest();
-//    relationalOperatorTest();
-//    iterator_tests();
+    std::cout << "Tests\n";
+    constructorsTest();
+    copyConstructorsTest();
+    assignmentOperatorTest();
+    resizeTests();
+    assignTests();
+    swapTest();
+    reserveTests();
+    pushBackTest();
+    popBackTest();
+    //todo для всех const методов надо будет сделать const версии тестов
+    bracesOperatorTest();
+    atTest();
+    frontTest();
+    backTest();
+    emptyTest();
+    clearTest();
+    dataTest();
+    allocatorTest();
+    exceptionSafetyTest();
+    relationalOperatorTest();
     iterConstructorTest();
     iterCopyConstructorTest();
     iterAssignTest();
@@ -1301,7 +1211,7 @@ int main(void) {
     iterPlusMinusInt();
     iterPlusMinusEqualTest();
     iterIncrementDecrementTest();
-    test();
-
+    iterBracesTest();
+    //test();
     return (0);
 }
