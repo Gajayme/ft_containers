@@ -9,6 +9,7 @@
 #include "../utils/enable_if.hpp"
 #include "../utils/conditional.hpp"
 #include "../utils/lexicographical_compare.hpp"
+#include "../utils/reverse_iterator.hpp"
 
 namespace ft {
 
@@ -260,6 +261,8 @@ public:
 
     typedef random_access_iterator<false> iterator;
     typedef random_access_iterator<true> const_iterator;
+    typedef reverse_iterator<const_iterator, const T> const_reverse_iterator;
+    typedef reverse_iterator<iterator, T> reverse_iterator;
 
     iterator begin() {
         return iterator (arr_);
@@ -269,6 +272,13 @@ public:
         return iterator(arr_ + size_);
     }
 
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
+
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
 
     //todo возможно эти методы вообще не нужны
     const_iterator begin() const {

@@ -1175,10 +1175,52 @@ void iterMinusIterTest() {
 
 }
 
-void test() {
+void reverseIterConstructorTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritDef;
+    ft::vector<int>::reverse_iterator rit = ftVec.rbegin();
+    ft::vector<int>::reverse_iterator rit1(rit);
+
+//    assert(*rit == 4);
+//    assert(*rit == *rit1);
+
+    //rit = ftVec.rend();
+
+//    assert(*--rit == 1);
+
+    ft::vector<int>::const_reverse_iterator critDef;
+    ft::vector<int>::const_reverse_iterator crit = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator crit1(rit);
+
+    std::cout << *crit << std::endl;
+    std::cout << *crit1 << std::endl;
+
+
 
 }
 
+
+
+void test() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    std::vector<int>::const_reverse_iterator ritStd1 = stdVec.rbegin();
+    //std::cout << *ritStd1 << std::endl;
+    ritStd1.base();
+}
+
+//todo reverse iterator
+//todo iterMinusIterTest
+//todo iterPlusIterTest
 int main(void) {
 
     std::cout << "Tests\n";
@@ -1212,6 +1254,8 @@ int main(void) {
     iterPlusMinusEqualTest();
     iterIncrementDecrementTest();
     iterBracesTest();
-    //test();
+
+    reverseIterConstructorTest();
+    test();
     return (0);
 }
