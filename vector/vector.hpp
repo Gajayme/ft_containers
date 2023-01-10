@@ -13,9 +13,17 @@
 
 namespace ft {
 
+/*!
+ * Класс vector.
+ * Полностью повторяет функционал vector из библиотеки STL.
+ */
 template <class T, typename Allocator = std::allocator<T> >
 class vector {
 
+    /*!
+     * Класс итератора с произвольным доступом.
+     * Полностью повторяет функционал random_access_iterator из библиотеки STL.
+     */
     template<bool IsConst>
     class random_access_iterator {
     public:
@@ -26,12 +34,15 @@ class vector {
         typedef T& reference;
         typedef std::random_access_iterator_tag iterator_category;
 
+        //-----------------------
+        // КОНСТРУКТОРЫ ИТЕРАТОРА
+        //-----------------------
+
         /*!
          * Конструктор итератора по умолчанию
          */
         random_access_iterator(const pointer ptr = NULL):
         ptr_(ptr) {
-                //std::cout << "default" << std::endl;
         }
 
         /*!
@@ -39,7 +50,6 @@ class vector {
          */
         template <bool B>
         random_access_iterator (const random_access_iterator<B> & x, typename ft::enable_if<!B>::type* = 0) {
-            //std::cout << "copy" << std::endl;
             ptr_ = x.operator->();
         }
 
@@ -47,8 +57,7 @@ class vector {
          * Оператор присваивания итератора
          */
         template<bool B>
-        random_access_iterator& operator=(const random_access_iterator<B> &x) {
-            //std::cout << "assign" << std::endl;
+        random_access_iterator& operator= (const random_access_iterator<B> &x) {
             ptr_ = x.operator->();
             return (*this);
         }
@@ -64,38 +73,37 @@ class vector {
         typedef typename ft::conditional<IsConst, const T&, reference>::value conditional_reference;
         typedef typename ft::conditional<IsConst, const T*, pointer>::value conditional_pointer;
 
+        friend class reverse_iterator<random_access_iterator<IsConst> >;
+
     public:
 
-        //------------------------------
-        // ОПЕРАТОРЫ ДОСТУПА К УКАЗАТЕЛЮ
-        //------------------------------
+        //----------------------------------------
+        // ОПЕРАТОРЫ ДОСТУПА К УКАЗАТЕЛЮ ИТЕРАТОРА
+        //----------------------------------------
 
         /*!
          * Оператор звездочка
          */
-        conditional_reference operator *() const {
+        conditional_reference operator* () const {
             return (*ptr_);
         }
 
         /*!
          * Оператор стрелочка
          */
-        conditional_pointer operator ->() const {
+        conditional_pointer operator-> () const {
             return (ptr_);
         }
 
-        //--------------------
-        // ОПЕРАТОРЫ СРАВНЕНИЯ
-        //--------------------
+        //------------------------------
+        // ОПЕРАТОРЫ СРАВНЕНИЯ ИТЕРАТОРА
+        //------------------------------
 
         /*!
          * Оператор ==
          */
         template<bool B>
         bool operator ==(const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ == other.operator->();
         }
 
@@ -104,9 +112,6 @@ class vector {
          */
         template <bool B>
         bool operator != (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return true;
-//            }
             return ptr_ != other.operator->();
         }
 
@@ -115,9 +120,6 @@ class vector {
          */
         template<bool B>
         bool operator > (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ > other.operator->();
         }
 
@@ -126,9 +128,6 @@ class vector {
          */
         template<bool B>
         bool operator < (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ < other.ptr_;
         }
 
@@ -137,9 +136,6 @@ class vector {
          */
         template<bool B>
         bool operator >= (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ >= other.operator->();
         }
 
@@ -148,9 +144,6 @@ class vector {
          */
         template<bool B>
         bool operator <= (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ <= other.operator->();
         }
 
@@ -183,7 +176,7 @@ class vector {
         /*!
          * Оператор +=
          */
-        random_access_iterator<IsConst> &operator +=(const difference_type n) {
+        random_access_iterator<IsConst> &operator+=(const difference_type n) {
             ptr_ += n;
             return *this;
         }
@@ -191,7 +184,7 @@ class vector {
         /*!
          * Оператор -=
          */
-        random_access_iterator<IsConst> &operator -=(const difference_type n) {
+        random_access_iterator<IsConst> &operator-=(const difference_type n) {
             ptr_ -= n;
             return *this;
         }
@@ -233,7 +226,7 @@ class vector {
         /*!
          *  Оператор []
          */
-        conditional_reference operator[](const difference_type n) const {
+        conditional_reference operator[] (const difference_type n) const {
             return *(ptr_ + n);
         }
 
@@ -241,7 +234,7 @@ class vector {
          *  Оператор - (iter - iter)
          */
         template<bool B>
-        difference_type operator -(random_access_iterator<B> &other) const {
+        difference_type operator- (random_access_iterator<B> &other) const {
             return ptr_ - other.operator->();
         }
 
@@ -261,34 +254,84 @@ public:
 
     typedef random_access_iterator<false> iterator;
     typedef random_access_iterator<true> const_iterator;
-    typedef reverse_iterator<const_iterator, const T> const_reverse_iterator;
-    typedef reverse_iterator<iterator, T> reverse_iterator;
+    typedef reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef reverse_iterator<iterator> reverse_iterator;
 
+    //-----------------------
+    // ВСЕ ВАРИАЦИИ begin/end
+    //-----------------------
+
+    /*!
+     * Создает и возвращает итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
     iterator begin() {
         return iterator (arr_);
     }
 
+    /*!
+     * Создает и возвращает итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
     iterator end() {
         return iterator(arr_ + size_);
     }
 
-    reverse_iterator rbegin() {
-        return reverse_iterator(end());
-    }
-
-    reverse_iterator rend() {
-        return reverse_iterator(begin());
-    }
-
-    //todo возможно эти методы вообще не нужны
+    /*!
+     * Создает и возвращает константный итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
     const_iterator begin() const {
         return const_iterator(arr_);
     }
 
+    /*!
+     * Создает и возвращает константный итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
     const_iterator end() const {
         return const_iterator(arr_ + size_);
     }
 
+    /*!
+     * Создает и возвращает реверсивный итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
+
+    /*!
+     * Создает и возвращает реверсивный итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
+
+    /*!
+     * Создает и возвращает константный реверсивный итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
+    const_reverse_iterator rbegin() const {
+        return const_reverse_iterator(end());
+    }
+
+    /*!
+     * Создает и возвращает константный реверсивный итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
+    const_reverse_iterator rend() const {
+        return const_reverse_iterator(begin());
+    }
+
+    //---------------------
+    // КОНСТРУКТОРЫ ВЕКТОРА
+    //---------------------
+
+    /*!
+     * Конструктор по-умолчанию.
+     */
     explicit vector (const allocator_type &alloc = allocator_type()):
     arr_(NULL),
     size_(0),
@@ -296,7 +339,12 @@ public:
     allocator_(alloc) {
     }
 
-    explicit vector (size_type n, const value_type &value = value_type(), const allocator_type& alloc = allocator_type()):
+    /*!
+     * Конструктор от элемента и количества элементов.
+     * @param value элемент, копиями которого будет заполнен вектор.
+     * @param n количество элементов.
+     */
+    explicit vector (const size_type n, const value_type &value = value_type(), const allocator_type& alloc = allocator_type()):
     arr_(NULL),
     size_(0),
     capacity_(0),
@@ -309,6 +357,10 @@ public:
 //        *this = x;
 //    }
 
+    /*!
+     * Конструктор копирования
+     * @param other вектор, который будет скопирован.
+     */
     vector (const vector& other) {
         allocator_ = other.allocator_;
         arr_ = allocator_.allocate(other.capacity_);
@@ -320,20 +372,15 @@ public:
                 allocator_.construct(arr_ + i, value_type(other[i]));
             }
         } catch (...) {
-            //todo правильно ли здесь выставлены sz и cp после отлова исключения?
-//            for (size_type j = 0; j < i; ++j) {
-//                allocator_.destroy(arr_ + j);
-//            }
-            clear();
-            if (arr_ != NULL) {
-                allocator_.deallocate(arr_, capacity_);
-            }
-            //todo нужно ли это?
-            capacity_ = 0;
-            //size_ = 0;
+            exception_cleaner(i);
             throw;
         }
     }
+
+    /*!
+     * Оператор присваивания.
+     * @param other вектор, который будет скопирован.
+     */
     //todo тут можно немного оптимизировать переприсваиванием элементов (в случае, если присваиваем к меньшему вектору), а не удаляя их
     vector& operator= (const vector& other) {
         if (this == &other) {
@@ -344,9 +391,7 @@ public:
             allocator_.deallocate(arr_, capacity_);
         }
         allocator_ = other.allocator_;
-        if (other.capacity_ > capacity_) {
-            capacity_ = other.capacity_;
-        }
+        capacity_ = (other.capacity_ > capacity_) ? other.capacity_ : capacity_;
         arr_ = allocator_.allocate(capacity_);
         size_ = other.size_;
         size_type i = 0;
@@ -355,16 +400,15 @@ public:
                 allocator_.construct(arr_ + i, value_type(other[i]));
             }
         } catch (...) {
-            //todo правильно ли здесь выставлены sz и cp после отлова исключения?
-            clear();
-            if (arr_ != NULL) {
-                allocator_.deallocate(arr_, capacity_);
-            }
+            exception_cleaner();
             throw;
         }
         return *this;
     }
 
+    /*!
+     * Деструктор.
+     */
     ~vector(){
         clear();
         if (arr_ != NULL) {
@@ -372,36 +416,74 @@ public:
         }
     };
 
+
+    //------------------------
+    // ОСНОВНЫЕ МЕТОДЫ ВЕКТОРА
+    //------------------------
+
+    /*!
+     * Возвращает количество элементов в векторе.
+     */
     size_type size() const {
         return size_;
     }
 
+    /*!
+     * Возвращает количество элементов в векторе, под которое
+     * выделена память.
+     */
     size_type capacity() const {
         return capacity_;
     }
 
+    /*!
+     * Пуст ли вектор.
+     */
     bool empty() const {
         return size_ == 0;
     }
 
-    value_type* data() {
+    /*!
+     * Возвращает "сырой" указатель на данные вектора.
+     */
+    pointer data() {
         return arr_;
     }
 
-    const value_type *data() const {
+    //todo это надо проверить
+    /*!
+     * Возвращает константный "сырой" указатель на данные вектора.
+     */
+    const pointer data() const {
         return arr_;
     }
 
+    /*!
+     * Возвращает аллокатор, содержащийся в векторе.
+     */
     allocator_type get_allocator() const {
         return allocator_;
     }
 
-    void assign (size_type n, const value_type& val) {
+    /*!
+     * Заменяет контент вектора, модифицирует размер вектора.
+     * @param n количество элементов после изменения
+     * @param val элемент, которым будет заполнен вектор после изменения
+     */
+    void assign (const size_type n, const value_type& val) {
         clear();
         resize(n, val);
     }
 
-    void resize(size_type n, value_type value = value_type()) {
+    /*!
+     * Меняет размер вектора.
+     * @details Если вектор содержит больше n элементов, то его размер усекается до n элементов.
+     * Если размер вектора меньше n, то добавляются недостающие элементы и инициализируются
+     * значением по умолчанию.
+     * @param n размер вектора после изменения.
+     * @param val элемент, которым будет заполнен вектор при необходимости.
+     */
+    void resize(const size_type n, value_type value = value_type()) {
         if (n < size_) {
             for (size_type i = n; i < size_; ++i) {
                 allocator_.destroy(arr_ + i);
@@ -428,7 +510,14 @@ public:
         size_ = n;
     }
 
-    void reserve(size_type n) {
+    /*!
+     * Меняет вместимость вектора.
+     * @details Если текущая вместимость вектора больше новой, то ничего
+     * не происходит. Иначе резервируется место под переданное количество элементов
+     * а существующие копируются в новую память.
+     * @param n новая вместимость вектора.
+     */
+    void reserve(const size_type n) {
         if (n <= capacity_) {
             return;
         }
@@ -449,6 +538,10 @@ public:
         capacity_ = n;
     }
 
+    /*!
+     * Меняет между собой содержимое векторов.
+     * @param other вектор, содержимое которого будет заменено с текущим.
+     */
     void swap (vector& other) {
         std::swap(arr_, other.arr_);
         std::swap(allocator_, other.allocator_);
@@ -456,6 +549,10 @@ public:
         std::swap(size_, other.size_);
     }
 
+    /*!
+     * Добавляет в вектор новый элемент.
+     * @details При необходимости заново выделяет память.
+     */
     void push_back(const value_type &value) {
         if (capacity_ == size_) {
             reserve (size_ == 0 ? 1 : (size_ * 2));
@@ -468,11 +565,19 @@ public:
         ++size_;
     }
 
+    /*!
+     * Добавляет удаляет из вектора последний элемент.
+     */
     void pop_back() {
         --size_;
         allocator_.destroy(arr_ + size_);
     }
 
+    /*!
+     * Очищает вектор.
+     * @details память не очищается, вызываются только деструкторы
+     * элементов.
+     */
     void clear() {
         for (size_type i = 0; i <  size_; ++i) {
             allocator_.destroy(arr_ + i);
@@ -480,14 +585,28 @@ public:
         size_ = 0;
     }
 
+    /*!
+     * Возвращает ссылку на элемент по его индексу.
+     * @param n индекс элемента.
+     */
     reference operator[](const size_type n) {
         return arr_[n];
     }
 
+    /*!
+     * Возвращает константную ссылку на элемент по его индексу.
+     * @param n индекс элемента.
+     */
     const_reference operator[](const size_type n) const {
         return  arr_[n];
     }
 
+    /*!
+     * Проверяет наличие и возвращает ссылку на элемент по его индексу.
+     * @param n индекс элемента.
+     * @details В случае ненахождения элемента с соответствующим индексом
+     * бросается исключение.
+     */
     reference at(const size_type n) {
         if (n >= size_) {
             throw std::out_of_range("Ft::vector:at: out of range");
@@ -495,6 +614,12 @@ public:
         return arr_[n];
     }
 
+    /*!
+     * Проверяет наличие и возвращает константную ссылку на элемент по его индексу.
+     * @param n индекс элемента.
+     * @details В случае ненахождения элемента с соответствующим индексом
+     * бросается исключение.
+     */
     const_reference at(const size_type n) const{
         if (n >= size_) {
             throw std::out_of_range("Ft::vector:const_at: out of range");
@@ -502,18 +627,30 @@ public:
         return arr_[n];
     }
 
+    /*!
+     * Возвращает ссылку на первый элемент вектора.
+     */
     reference front() {
         return arr_[0];
     }
 
+    /*!
+     * Возвращает константную ссылку на первый элемент вектора.
+     */
     const_reference front() const{
         return arr_[0];
     }
 
+    /*!
+     * Возвращает ссылку на последний элемент вектора.
+     */
     reference back() {
         return arr_[size_ - 1];
     }
 
+    /*!
+     * Возвращает константную ссылку на последний элемент вектора.
+     */
     const_reference back() const{
         return arr_[size_ - 1];
     }
@@ -524,6 +661,24 @@ private:
     size_type capacity_;
     allocator_type allocator_;
 
+    /*!
+     * Функция для очистки памяти при обработке исключений.
+     */
+    void exception_cleaner (const size_type i) {
+        for (size_type j = 0; j < i; ++j) {
+            allocator_.destroy(arr_ + j);
+        }
+        if (arr_ != NULL) {
+            allocator_.deallocate(arr_, capacity_);
+        }
+        capacity_ = 0;
+        size_ = 0;
+    }
+
+    /*!
+     * Функция для повторения поведения стандартного vector
+     * при исключении, выброшенном в метода resize.
+     */
     void resize_exception_handler (const size_type oldCapacity) {
         pointer newArr = allocator_.allocate(oldCapacity);
         size_type i = 0;
@@ -544,13 +699,21 @@ private:
             allocator_.destroy(arr_ + i);
         }
         if (arr_ != NULL) {
-            delete[] reinterpret_cast<int8_t *>(arr_);
+            //delete[] reinterpret_cast<int8_t *>(arr_);
+            allocator_.deallocate(arr_, capacity_);
         }
         arr_ = newArr;
         capacity_ = oldCapacity;
     }
 };
 
+//-------------------
+// СРАВНЕНИЕ ВЕКТОРОВ
+//-------------------
+
+/*!
+ * Сравнение двух векторов на равенство.
+ */
 template <class T, class Alloc>
 bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     if (lhs.size() != rhs.size()) {
@@ -564,31 +727,49 @@ bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     return true;
 }
 
+/*!
+ * Сравнение двух векторов на неравенство.
+ */
 template <class T, class Alloc>
-bool operator != (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     return !(rhs == lhs);
 }
 
+/*!
+ * Сравнение двух векторов на меньше.
+ */
 template <class T, class Alloc>
-bool operator < (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
+/*!
+ * Сравнение двух векторов на меньше или равно.
+ */
 template <class T, class Alloc>
-bool operator <= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     return !(lhs > rhs);
 }
 
+/*!
+ * Сравнение двух векторов на больше или равно.
+ */
 template <class T, class Alloc>
-bool operator >= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     return !(lhs < rhs);
 }
 
+/*!
+ * Сравнение двух векторов на больше.
+ */
 template <class T, class Alloc>
-bool operator > (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     return (rhs < lhs);
 }
 
+/*!
+ * Обмен данными меду двумя векторами.
+ */
 template <typename T, typename Alloc>
 void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
     lhs.swap(rhs);

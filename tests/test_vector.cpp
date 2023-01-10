@@ -1172,7 +1172,32 @@ void iterBracesTest() {
 }
 
 void iterMinusIterTest() {
+    ft::vector<int> vecFt;
+    vecFt.push_back(1);
+    vecFt.push_back(2);
+    vecFt.push_back(3);
 
+    ft::vector<int>::iterator it1 = vecFt.begin();
+    ft::vector<int>::iterator it2 = ++vecFt.begin();
+    ft::vector<int>::const_iterator cit1 = vecFt.begin();
+    ft::vector<int>::const_iterator cit2 = ++vecFt.begin();
+
+    std::vector<int> vecStd;
+    vecStd.push_back(1);
+    vecStd.push_back(2);
+    vecStd.push_back(3);
+
+    std::vector<int>::iterator itStd1 = vecStd.begin();
+    std::vector<int>::iterator itStd2 = ++vecStd.begin();
+    std::vector<int>::const_iterator citStd1 = vecStd.begin();
+    std::vector<int>::const_iterator citStd2 = ++vecStd.begin();
+
+
+    assert(it2 - it1 == itStd2 - itStd1);
+    assert(it1 - it2 == itStd1 - itStd2);
+    assert(cit2 - cit1 == citStd2 - citStd1);
+    assert(cit1 - cit2 == citStd1 - citStd2);
+    assert(cit2 - it1 == citStd2 - itStd1);
 }
 
 void reverseIterConstructorTest() {
@@ -1186,44 +1211,253 @@ void reverseIterConstructorTest() {
     ft::vector<int>::reverse_iterator rit = ftVec.rbegin();
     ft::vector<int>::reverse_iterator rit1(rit);
 
-//    assert(*rit == 4);
-//    assert(*rit == *rit1);
+    assert(*rit == 4);
+    assert(*rit == *rit1);
 
-    //rit = ftVec.rend();
-
-//    assert(*--rit == 1);
+    rit = ftVec.rend();
+    assert(*--rit == 1);
 
     ft::vector<int>::const_reverse_iterator critDef;
     ft::vector<int>::const_reverse_iterator crit = ftVec.rbegin();
-    ft::vector<int>::const_reverse_iterator crit1(rit);
+    ft::vector<int>::const_reverse_iterator crit1(crit);
 
-    std::cout << *crit << std::endl;
-    std::cout << *crit1 << std::endl;
+    assert(*crit == 4);
+    assert(*crit == *crit1);
 
+    critDef = crit;
+    assert(*crit == *critDef);
 
+    ft::vector<int>::const_reverse_iterator crit2(rit1);
+    assert(*crit2 == 4);
+    assert(*rit1 == *crit2);
 
+    ++rit1;
+    crit2 = rit1;
+    assert(*crit2 == 3);
+    assert(*crit2 == *rit1);
+
+    //Некомпилируемые строки
+    //ft::vector<int>::reverse_iterator rit2(crit2);
+    //rit = crit2;
 }
 
-
-
-void test() {
+void reverseIterBaseTest() {
     std::vector<int> stdVec;
     stdVec.push_back(1);
     stdVec.push_back(2);
     stdVec.push_back(3);
     stdVec.push_back(4);
 
-    std::vector<int>::const_reverse_iterator ritStd1 = stdVec.rbegin();
-    //std::cout << *ritStd1 << std::endl;
-    ritStd1.base();
+    std::vector<int>::reverse_iterator ritStd = stdVec.rbegin();
+    std::vector<int>::iterator itStd = ritStd.base();
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+    ft::vector<int>::iterator itFt = ritFt.base();
+    ft::vector<int>::iterator itFt1 = ritFt.base();
+
+    assert(itStd == stdVec.end());
+    assert(itFt == ftVec.end());
+    assert(*--itStd == *--itFt);
+    assert(*itStd == 4);
+
+    ++ritStd;
+    ++ritStd;
+    ++ritStd;
+    ++ritStd;
+
+    ++ritFt;
+    ++ritFt;
+    ++ritFt;
+    ++ritFt;
+
+    itStd = ritStd.base();
+    itFt = ritFt.base();
+
+    assert(itStd == stdVec.begin());
+    assert(itFt == ftVec.begin());
+    assert(*itStd == *itFt);
 }
 
-//todo reverse iterator
-//todo iterMinusIterTest
-//todo iterPlusIterTest
+
+void reverseIteratorDereferenceTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    std::vector<int>::reverse_iterator ritStd = stdVec.rbegin();
+    std::vector<int>::const_reverse_iterator critStd = stdVec.rbegin();
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator critFt = ftVec.rbegin();
+
+    assert(*ritStd == *ritFt);
+    assert(*critStd == *critFt);
+}
+
+void reverseIteratorPlusIntTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+
+    assert(*ritFt == 4);
+    assert(*(ritFt + 1) == 3);
+    assert(*(ritFt + 3) == 1);
+    assert((ritFt + 4).base() == ftVec.begin());
+}
+
+void intPlusReverseIteratorTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+
+    assert(*ritFt == 4);
+    assert(*(1 + ritFt) == 3);
+    assert(*(3 + ritFt) == 1);
+    assert((4 + ritFt).base() == ftVec.begin());
+}
+
+void reverseIteratorIncrementTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator critFt = ftVec.rbegin();
+
+    assert(*ritFt++ == 4);
+    assert(*critFt++ == 4);
+    assert(*ritFt == 3);
+    assert(*critFt == 3);
+    assert(*++ritFt == 2);
+    assert(*++critFt == 2);
+}
+
+void reverseIteratorDecrementTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rend();
+    ft::vector<int>::const_reverse_iterator critFt = ftVec.rend();
+
+    assert(*--ritFt == 1);
+    assert(*--critFt == 1);
+    assert(*ritFt-- == 1);
+    assert(*critFt-- == 1);
+    assert(*--ritFt == 3);
+    assert(*--critFt == 3);
+}
+
+void reverseIteratorPlusEqualTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator critFt = ftVec.rbegin();
+
+    assert (*ritFt == 4);
+    ritFt += 1;
+    critFt += 1;
+    assert (*ritFt == *critFt);
+
+    ritFt += 2;
+    critFt += 2;
+    assert (*ritFt == *ftVec.begin());
+    assert (*ritFt == *critFt);
+}
+
+void reverseIteratorMinusEqualTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rend();
+    ft::vector<int>::const_reverse_iterator critFt = ftVec.rend();
+
+    ritFt -= 1;
+    critFt -= 1;
+    assert (*ritFt == 1);
+    assert (*ritFt == *critFt);
+
+    ritFt -= 3;
+    critFt -= 3;
+    assert (*ritFt == *--ftVec.end());
+    assert (*ritFt == *critFt);
+}
+
+void reverseIteratorMinusReverseIteratorTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator rit1Ft = ftVec.rbegin();
+    ft::vector<int>::reverse_iterator rit2Ft = ftVec.rend();
+    ft::vector<int>::const_reverse_iterator crit1Ft = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator crit2Ft = ftVec.rend();
+
+    std::vector<int>::reverse_iterator rit1Std = stdVec.rbegin();
+    std::vector<int>::reverse_iterator rit2Std = stdVec.rend();
+    std::vector<int>::const_reverse_iterator crit1Std = stdVec.rbegin();
+    std::vector<int>::const_reverse_iterator crit2Std = stdVec.rend();
+
+    assert(rit2Ft - rit1Ft == rit2Std - rit1Std);
+    assert(crit2Ft - crit1Ft == crit2Std - crit1Std);
+    assert(crit2Ft - rit1Ft == crit2Std - rit1Std);
+
+    assert(rit1Ft - rit2Ft == rit1Std - rit2Std);
+    assert(crit1Ft - crit2Ft == crit1Std - crit2Std);
+    assert(crit1Ft - rit2Ft == crit1Std - rit2Std);
+}
+
+void test() {
+//    std::vector<int> stdVec;
+//    stdVec.push_back(1);
+//    stdVec.push_back(2);
+//    stdVec.push_back(3);
+//    stdVec.push_back(4);
+//
+//    std::vector<int> stdVec2;
+//    stdVec2.push_back(4);
+//    stdVec2.push_back(4);
+}
+
+//todo для всех const методов надо будет сделать const версии тестов
 int main(void) {
 
     std::cout << "Tests\n";
+
+    //! VECTOR TESTS
     constructorsTest();
     copyConstructorsTest();
     assignmentOperatorTest();
@@ -1233,7 +1467,6 @@ int main(void) {
     reserveTests();
     pushBackTest();
     popBackTest();
-    //todo для всех const методов надо будет сделать const версии тестов
     bracesOperatorTest();
     atTest();
     frontTest();
@@ -1244,6 +1477,8 @@ int main(void) {
     allocatorTest();
     exceptionSafetyTest();
     relationalOperatorTest();
+
+    //! ITER TESTS
     iterConstructorTest();
     iterCopyConstructorTest();
     iterAssignTest();
@@ -1254,8 +1489,20 @@ int main(void) {
     iterPlusMinusEqualTest();
     iterIncrementDecrementTest();
     iterBracesTest();
+    iterMinusIterTest();
 
+    //! REVERSE ITER TESTS
     reverseIterConstructorTest();
+    reverseIterBaseTest();
+    reverseIteratorDereferenceTest();
+    reverseIteratorPlusIntTest();
+    intPlusReverseIteratorTest();
+    reverseIteratorIncrementTest();
+    reverseIteratorDecrementTest();
+    reverseIteratorPlusEqualTest();
+    reverseIteratorMinusEqualTest();
+    reverseIteratorMinusReverseIteratorTest();
+
     test();
     return (0);
 }
