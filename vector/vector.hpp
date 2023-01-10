@@ -13,9 +13,17 @@
 
 namespace ft {
 
+/*!
+ * Класс vector.
+ * Полностью повторяет функционал vector из библиотеки STL.
+ */
 template <class T, typename Allocator = std::allocator<T> >
 class vector {
 
+    /*!
+     * Класс итератора с произвольным доступом.
+     * Полностью повторяет функционал random_access_iterator из библиотеки STL.
+     */
     template<bool IsConst>
     class random_access_iterator {
     public:
@@ -31,7 +39,6 @@ class vector {
          */
         random_access_iterator(const pointer ptr = NULL):
         ptr_(ptr) {
-                //std::cout << "default" << std::endl;
         }
 
         /*!
@@ -39,7 +46,6 @@ class vector {
          */
         template <bool B>
         random_access_iterator (const random_access_iterator<B> & x, typename ft::enable_if<!B>::type* = 0) {
-            //std::cout << "copy" << std::endl;
             ptr_ = x.operator->();
         }
 
@@ -48,7 +54,6 @@ class vector {
          */
         template<bool B>
         random_access_iterator& operator=(const random_access_iterator<B> &x) {
-            //std::cout << "assign" << std::endl;
             ptr_ = x.operator->();
             return (*this);
         }
@@ -63,6 +68,8 @@ class vector {
         typedef typename ft::conditional<IsConst, const T, value_type>::value conditional_value;
         typedef typename ft::conditional<IsConst, const T&, reference>::value conditional_reference;
         typedef typename ft::conditional<IsConst, const T*, pointer>::value conditional_pointer;
+
+        friend class reverse_iterator<random_access_iterator<IsConst> >;
 
     public:
 
@@ -93,9 +100,6 @@ class vector {
          */
         template<bool B>
         bool operator ==(const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ == other.operator->();
         }
 
@@ -104,9 +108,6 @@ class vector {
          */
         template <bool B>
         bool operator != (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return true;
-//            }
             return ptr_ != other.operator->();
         }
 
@@ -115,9 +116,6 @@ class vector {
          */
         template<bool B>
         bool operator > (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ > other.operator->();
         }
 
@@ -126,9 +124,6 @@ class vector {
          */
         template<bool B>
         bool operator < (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ < other.ptr_;
         }
 
@@ -137,9 +132,6 @@ class vector {
          */
         template<bool B>
         bool operator >= (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ >= other.operator->();
         }
 
@@ -148,9 +140,6 @@ class vector {
          */
         template<bool B>
         bool operator <= (const random_access_iterator<B> &other) const {
-//            if ((ptr_ == NULL) || (other.operator->() == NULL)) {
-//                return false;
-//            }
             return ptr_ <= other.operator->();
         }
 
@@ -183,7 +172,7 @@ class vector {
         /*!
          * Оператор +=
          */
-        random_access_iterator<IsConst> &operator +=(const difference_type n) {
+        random_access_iterator<IsConst> &operator+=(const difference_type n) {
             ptr_ += n;
             return *this;
         }
@@ -191,7 +180,7 @@ class vector {
         /*!
          * Оператор -=
          */
-        random_access_iterator<IsConst> &operator -=(const difference_type n) {
+        random_access_iterator<IsConst> &operator-=(const difference_type n) {
             ptr_ -= n;
             return *this;
         }
@@ -261,34 +250,76 @@ public:
 
     typedef random_access_iterator<false> iterator;
     typedef random_access_iterator<true> const_iterator;
-    typedef reverse_iterator<const_iterator, const T> const_reverse_iterator;
-    typedef reverse_iterator<iterator, T> reverse_iterator;
+    typedef reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef reverse_iterator<iterator> reverse_iterator;
 
+    /*!
+     * Создает и возвращает итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
     iterator begin() {
         return iterator (arr_);
     }
 
+    /*!
+     * Создает и возвращает итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
     iterator end() {
         return iterator(arr_ + size_);
     }
 
-    reverse_iterator rbegin() {
-        return reverse_iterator(end());
-    }
-
-    reverse_iterator rend() {
-        return reverse_iterator(begin());
-    }
-
-    //todo возможно эти методы вообще не нужны
+    /*!
+     * Создает и возвращает константный итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
     const_iterator begin() const {
         return const_iterator(arr_);
     }
 
+    /*!
+     * Создает и возвращает константный итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
     const_iterator end() const {
         return const_iterator(arr_ + size_);
     }
 
+    /*!
+     * Создает и возвращает реверсивный итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
+
+    /*!
+     * Создает и возвращает реверсивный итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
+
+    /*!
+     * Создает и возвращает константный реверсивный итератор,
+     * с внутренним указателем элемент вектора, следующий за последним.
+     */
+    const_reverse_iterator rbegin() const {
+        return const_reverse_iterator(end());
+    }
+
+    /*!
+     * Создает и возвращает константный реверсивный итератор,
+     * с внутренним указателем на первый элемент вектора.
+     */
+    const_reverse_iterator rend() const {
+        return const_reverse_iterator(begin());
+    }
+
+    /*!
+     * Конструктор по-умолчанию.
+     */
     explicit vector (const allocator_type &alloc = allocator_type()):
     arr_(NULL),
     size_(0),
@@ -296,7 +327,12 @@ public:
     allocator_(alloc) {
     }
 
-    explicit vector (size_type n, const value_type &value = value_type(), const allocator_type& alloc = allocator_type()):
+    /*!
+     * Конструктор от элемента и количества элементов.
+     * @param value элемент, копиями которого будет заполнен вектор.
+     * @param n количество элементов.
+     */
+    explicit vector (const size_type n, const value_type &value = value_type(), const allocator_type& alloc = allocator_type()):
     arr_(NULL),
     size_(0),
     capacity_(0),
