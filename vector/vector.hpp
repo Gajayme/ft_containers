@@ -234,7 +234,7 @@ class vector {
          *  Оператор - (iter - iter)
          */
         template<bool B>
-        difference_type operator- (random_access_iterator<B> &other) const {
+        difference_type operator- (random_access_iterator<B> other) const {
             return ptr_ - other.operator->();
         }
 
@@ -400,7 +400,7 @@ public:
                 allocator_.construct(arr_ + i, value_type(other[i]));
             }
         } catch (...) {
-            exception_cleaner();
+            exception_cleaner(i);
             throw;
         }
         return *this;
@@ -572,6 +572,30 @@ public:
         --size_;
         allocator_.destroy(arr_ + size_);
     }
+
+    iterator insert (iterator pos, const value_type&  val) {
+        //todo если передали неразыменовываемый вектор??
+        value_type tmp;
+        value_type prev = *pos;
+       // iterator it = begin();
+       //todo для этого я изменил оператор - у вектора (теперь он принимает рвалью ссылку. Правильно ли это?!!
+        size_type pos_distance = pos - begin();
+        iterator to_return = pos;
+        if (capacity_ == size_) {
+            reserve (size_ == 0 ? 1 : (size_ * 2));
+            pos = begin() + pos_distance;
+        }
+        *pos = val;
+        while (++pos < end()) {
+            tmp = *pos;
+            *pos = prev;
+            prev = tmp;
+        }
+        push_back(tmp);
+        return to_return;
+    }
+
+
 
     /*!
      * Очищает вектор.

@@ -1440,6 +1440,122 @@ void reverseIteratorMinusReverseIteratorTest() {
     assert(crit1Ft - rit2Ft == crit1Std - rit2Std);
 }
 
+void reverseIteratorBraceTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    std::vector<int>::reverse_iterator ritStd = stdVec.rbegin();
+    ft::vector<int>::reverse_iterator ritFt = ftVec.rbegin();
+
+    ft::vector<int>::const_reverse_iterator critFt = ftVec.rbegin();
+
+    assert(ritStd[0] == ritFt[0]);
+    assert(ritStd[1] == ritFt[1]);
+    assert(ritStd[2] == ritFt[2]);
+    assert(ritStd[3] == ritFt[3]);
+
+    assert(ritStd[0] == critFt[0]);
+    assert(ritStd[1] == critFt[1]);
+    assert(ritStd[2] == critFt[2]);
+    assert(ritStd[3] == critFt[3]);
+}
+
+void reverseIteratorRelationTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::reverse_iterator rit1 = ftVec.rbegin();
+    ft::vector<int>::reverse_iterator rit2 = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator crit1 = ftVec.rbegin();
+    ft::vector<int>::const_reverse_iterator crit2 = ftVec.rbegin();
+
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    std::vector<int>::reverse_iterator ritStd1 = stdVec.rbegin();
+    std::vector<int>::reverse_iterator ritStd2 = stdVec.rbegin();
+    std::vector<int>::const_reverse_iterator critStd1 = stdVec.rbegin();
+    std::vector<int>::const_reverse_iterator critStd2 = stdVec.rbegin();
+
+    assert(rit1 == rit2);
+    assert(crit1 == crit2);
+    assert(rit1 == crit2);
+
+    ++rit2;
+    ++crit2;
+
+    assert(rit1 != rit2);
+    assert(crit1 != crit2);
+    assert(rit1 != crit2);
+
+    ++rit1;
+    ++crit1;
+
+    assert(rit1 == rit2);
+    assert(crit1 == crit2);
+    assert(rit1 == crit2);
+
+    --rit1;
+    --crit1;
+    --rit2;
+    --crit2;
+
+    assert((rit1 > rit2) == (ritStd1 > ritStd2));
+    assert((rit1 >= rit2) == (ritStd1 >= ritStd2));
+    assert((rit1 < rit2) == (ritStd1 < ritStd2));
+    assert((rit1 <= rit2) == (ritStd1 <= ritStd2));
+
+    assert((crit1 > crit2) == (critStd1 > critStd2));
+    assert((crit1 >= crit2) == (critStd1 >= critStd2));
+    assert((crit1 < crit2) == (critStd1 < critStd2));
+    assert((crit1 <= crit2) == (critStd1 <= critStd2));
+
+    ++rit1;
+    ++ritStd1;
+    ++crit1;
+    ++critStd1;
+
+    assert((rit1 > rit2) == (ritStd1 > ritStd2));
+    assert((rit1 >= rit2) == (ritStd1 >= ritStd2));
+    assert((rit1 < rit2) == (ritStd1 < ritStd2));
+    assert((rit1 <= rit2) == (ritStd1 <= ritStd2));
+
+    assert((crit1 > crit2) == (critStd1 > critStd2));
+    assert((crit1 >= crit2) == (critStd1 >= critStd2));
+    assert((crit1 < crit2) == (critStd1 < critStd2));
+    assert((crit1 <= crit2) == (critStd1 <= critStd2));
+
+    rit2 += 2;
+    ritStd2 += 2;
+    crit2 += 2;
+    critStd2 += 2;
+
+    assert((rit1 > rit2) == (ritStd1 > ritStd2));
+    assert((rit1 >= rit2) == (ritStd1 >= ritStd2));
+    assert((rit1 < rit2) == (ritStd1 < ritStd2));
+    assert((rit1 <= rit2) == (ritStd1 <= ritStd2));
+
+    assert((crit1 > crit2) == (critStd1 > critStd2));
+    assert((crit1 >= crit2) == (critStd1 >= critStd2));
+    assert((crit1 < crit2) == (critStd1 < critStd2));
+    assert((crit1 <= crit2) == (critStd1 <= critStd2));
+}
+
 void test() {
 //    std::vector<int> stdVec;
 //    stdVec.push_back(1);
@@ -1447,9 +1563,64 @@ void test() {
 //    stdVec.push_back(3);
 //    stdVec.push_back(4);
 //
-//    std::vector<int> stdVec2;
-//    stdVec2.push_back(4);
-//    stdVec2.push_back(4);
+//    std::vector<int>::iterator it = stdVec.begin();
+//
+//    size_t  val = it - stdVec.begin();
+
+
+
+    //
+//    ++it;
+//
+//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+//    stdVec.insert(it, 0);
+//    it = stdVec.begin();
+//    ++it;
+//
+//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+//    stdVec.insert(it, 0);
+//    it = stdVec.begin();
+//    ++it;
+//
+//
+//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+//    stdVec.insert(it, 0);
+//    it = stdVec.begin();
+//    ++it;
+//
+//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+//    stdVec.insert(it, 0);
+//    it = stdVec.begin();
+//    ++it;
+//
+//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+//    stdVec.insert(it, 0);
+//    it = stdVec.begin();
+//    ++it;
+//
+//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+
+
+//    ft::vector<int> ftVec;
+//    ftVec.push_back(1);
+//    ftVec.push_back(2);
+//    ftVec.push_back(3);
+//    ftVec.push_back(4);
+//
+//    ft::vector<int>::iterator it = ftVec.begin();
+//
+//    ++it;
+
+    //std::cout << *it << std::endl;
+
+    //std::cout << ftVec.size() << " " <<  ftVec.capacity() << std::endl;
+//    ftVec.insert(it, 9);
+    //std::cout << ftVec.size() << " " <<  ftVec.capacity() << std::endl;
+
+//    for (size_t i = 0; i != ftVec.size(); ++i) {
+//        std::cout << ftVec[i] << std::endl;
+//    }
+
 }
 
 //todo для всех const методов надо будет сделать const версии тестов
@@ -1502,6 +1673,8 @@ int main(void) {
     reverseIteratorPlusEqualTest();
     reverseIteratorMinusEqualTest();
     reverseIteratorMinusReverseIteratorTest();
+    reverseIteratorBraceTest();
+    reverseIteratorRelationTest();
 
     test();
     return (0);

@@ -91,6 +91,40 @@ public:
         return (other.operator->() - operator->());
     }
 
+    conditional_reference operator[](const difference_type n) const {
+        return iter_[-n - 1];
+    }
+
+    template <class Iterator>
+    bool operator== (const reverse_iterator<Iterator> &other) const {
+        return other.base() == iter_;
+    }
+
+    template <class Iterator>
+    bool operator!= (const reverse_iterator<Iterator> &other) const {
+        return other.base() != iter_;
+    }
+
+    template <class Iterator>
+    bool operator< (const reverse_iterator<Iterator> &other) const {
+        return iter_ > other.base();
+    }
+
+    template <class Iterator>
+    bool operator<= (const reverse_iterator<Iterator> &other) const {
+        return iter_ >= other.base();
+    }
+
+    template <class Iterator>
+    bool operator> (const reverse_iterator<Iterator> &other) const {
+        return iter_ < other.base();
+    }
+
+    template <class Iterator>
+    bool operator>= (const reverse_iterator<Iterator> &other) const {
+        return iter_ <= other.base();
+    }
+
 private:
     Iter iter_;
 };
