@@ -865,6 +865,72 @@ void exceptionSafetyTest() {
     }
 }
 
+void insertFirstTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    std::vector<int>::const_iterator stdIt = ++stdVec.begin();
+    ft::vector<int>::iterator ftIt = ++ftVec.begin();
+
+    assert(*(ftVec.insert(ftIt, 9)) == *(stdVec.insert(stdIt, 9)));
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+
+    ftIt = ++ftVec.begin();
+    stdIt = ++stdVec.begin();
+
+    assert(*ftVec.insert(ftVec.insert(ftIt, 9), 100) == *stdVec.insert(stdVec.insert(stdIt, 9), 100));
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+
+    stdIt = stdVec.end();
+    ftIt = ftVec.end();
+
+    ftIt = ftVec.insert(ftIt, 9);
+    stdIt = stdVec.insert(stdIt, 9);
+    assert(*ftIt == *stdIt);
+
+}
+
+void insertSecondTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+
+    std::vector<int>::const_iterator stdIt = stdVec.begin();
+    ft::vector<int>::iterator ftIt = ftVec.begin();
+
+    assert(*stdVec.insert(stdIt, 2) == *ftVec.insert(ftIt, 2));
+    stdVec.pop_back();
+    ftVec.pop_back();
+
+    stdIt = stdVec.end();
+    ftIt = ftVec.end();
+    assert(*stdVec.insert(stdIt, 3) == *ftVec.insert(ftIt, 3));
+
+    ftIt = ++ftVec.end();
+    try {
+        ftVec.insert(ftIt, 3);
+        assert(1 == 2);
+    } catch(...) {
+    }
+}
+
+//====================
+//===ITERATOR TESTS===
+//====================
+
 void iterConstructorTest() {
     ft::vector<int> ftVec;
     ftVec.push_back(1);
@@ -1557,48 +1623,33 @@ void reverseIteratorRelationTest() {
 }
 
 void test() {
-//    std::vector<int> stdVec;
-//    stdVec.push_back(1);
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
 //    stdVec.push_back(2);
 //    stdVec.push_back(3);
 //    stdVec.push_back(4);
+
+//    std::vector<int>::const_iterator it = stdVec.end();
 //
-//    std::vector<int>::iterator it = stdVec.begin();
-//
-//    size_t  val = it - stdVec.begin();
+//    stdVec.insert(it, 2);
+//    for (size_t i = 0; i != stdVec.size(); ++i) {
+//        std::cout << stdVec[i] << std::endl;
+//    }
 
 
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
 
-    //
-//    ++it;
-//
-//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
-//    stdVec.insert(it, 0);
-//    it = stdVec.begin();
-//    ++it;
-//
-//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
-//    stdVec.insert(it, 0);
-//    it = stdVec.begin();
-//    ++it;
-//
-//
-//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
-//    stdVec.insert(it, 0);
-//    it = stdVec.begin();
-//    ++it;
-//
-//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
-//    stdVec.insert(it, 0);
-//    it = stdVec.begin();
-//    ++it;
-//
-//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
-//    stdVec.insert(it, 0);
-//    it = stdVec.begin();
-//    ++it;
-//
-//    std::cout << stdVec.size() << " " << stdVec.capacity() << std::endl;
+    ft::vector<int>::iterator it = ++ftVec.begin();
+
+    ftVec.insert(it, 2, 9);
+
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        std::cout << ftVec[i] << std::endl;
+    }
+
 
 
 //    ft::vector<int> ftVec;
@@ -1607,20 +1658,17 @@ void test() {
 //    ftVec.push_back(3);
 //    ftVec.push_back(4);
 //
+//    std::cout << ftVec.size() << " " << ftVec.capacity() << std::endl;
+//
 //    ft::vector<int>::iterator it = ftVec.begin();
 //
 //    ++it;
-
-    //std::cout << *it << std::endl;
-
-    //std::cout << ftVec.size() << " " <<  ftVec.capacity() << std::endl;
-//    ftVec.insert(it, 9);
-    //std::cout << ftVec.size() << " " <<  ftVec.capacity() << std::endl;
-
+//
+//    *ftVec.insert(it, 9);
+//
 //    for (size_t i = 0; i != ftVec.size(); ++i) {
 //        std::cout << ftVec[i] << std::endl;
 //    }
-
 }
 
 //todo для всех const методов надо будет сделать const версии тестов
@@ -1648,6 +1696,9 @@ int main(void) {
     allocatorTest();
     exceptionSafetyTest();
     relationalOperatorTest();
+    insertFirstTest();
+    insertSecondTest();
+
 
     //! ITER TESTS
     iterConstructorTest();
@@ -1676,6 +1727,6 @@ int main(void) {
     reverseIteratorBraceTest();
     reverseIteratorRelationTest();
 
-    test();
+    //test();
     return (0);
 }

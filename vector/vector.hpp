@@ -128,7 +128,7 @@ class vector {
          */
         template<bool B>
         bool operator < (const random_access_iterator<B> &other) const {
-            return ptr_ < other.ptr_;
+            return ptr_ < other.operator->();
         }
 
         /*!
@@ -573,29 +573,148 @@ public:
         allocator_.destroy(arr_ + size_);
     }
 
-    iterator insert (iterator pos, const value_type&  val) {
-        //todo если передали неразыменовываемый вектор??
-        value_type tmp;
-        value_type prev = *pos;
-       // iterator it = begin();
-       //todo для этого я изменил оператор - у вектора (теперь он принимает рвалью ссылку. Правильно ли это?!!
-        size_type pos_distance = pos - begin();
-        iterator to_return = pos;
+    iterator insert (const_iterator position, const value_type&  val) {
+        //todo для этого я изменил оператор - у вектора (теперь он принимает рвалью ссылку. Правильно ли это?!!
+        //todo протестить exception safety
+        //todo нужна ли эта проверка?
+        if (position < begin() || position > end()) {
+            throw std::logic_error("vector");
+        }
+        const size_type pos_distance = position - begin();
         if (capacity_ == size_) {
-            reserve (size_ == 0 ? 1 : (size_ * 2));
-            pos = begin() + pos_distance;
+            capacity_ = (size_ == 0) ? 1 : (size_ * 2);
+            pointer new_arr = allocator_.allocate(capacity_);
+            try {
+                std::uninitialized_copy(arr_, arr_ + pos_distance, new_arr);
+
+            } catch (...) {
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = size_;
+                throw;
+            }
+            try {
+                allocator_.construct(new_arr + pos_distance, val);
+            } catch (...) {
+                for(size_type i = 0; i < pos_distance; ++i) {
+                    allocator_.destroy(new_arr + i);
+                }
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = size_;
+                throw;
+            }
+            try {
+                std::uninitialized_copy(arr_ + pos_distance, arr_ + size_ , new_arr + pos_distance + 1);
+            } catch (...) {
+                for(size_type i = 0; i <= pos_distance; ++i) {
+                    allocator_.destroy(new_arr + i);
+                }
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = size_;
+                throw;
+            }
+            for (size_type i = 0; i < size_; ++i) {
+                allocator_.destroy(arr_ + i);
+            }
+            if (size_ != 0) {
+                allocator_.deallocate(arr_, size_);
+            }
+            arr_ = new_arr;
+        } else {
+            for (size_type i = size_; i < pos_distance; --i) {
+                allocator_.destroy(arr_+i);
+                try {
+                    allocator_.construct(arr_ + i, arr_[i - 1]);
+                } catch (...) {
+                    exception_cleaner(i);
+                    throw;
+                }
+            }
+            allocator_.destroy(arr_ + pos_distance);
+            try {
+                allocator_.construct(arr_ + pos_distance, val);
+            } catch (...) {
+                exception_cleaner(size_ - 1);
+                throw;
+            }
         }
-        *pos = val;
-        while (++pos < end()) {
-            tmp = *pos;
-            *pos = prev;
-            prev = tmp;
-        }
-        push_back(tmp);
-        return to_return;
+        ++size_;
+        return begin() + pos_distance;
     }
 
+    void insert (const_iterator position, size_type n, const value_type& val) {
+        //todo протестить exception safety
+        if (position < begin() || position > end()) {
+            throw std::logic_error("vector");
+        }
+        const size_type pos_distance = position - begin();
+        if (capacity_ < size_ + n) {
+            size_type old_capacity = capacity_;
+            capacity_ = (size_ * 2 < size_ + n) ? size_ + n : (size_ * 2);
+            pointer new_arr = allocator_.allocate(capacity_);
+            try {
+                std::uninitialized_copy(arr_, arr_ + pos_distance, new_arr);
+            } catch (...) {
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = old_capacity;
+                throw;
+            }
+            size_type j = pos_distance;
+            try {
+                for (; j != pos_distance + n; ++j) {
+                    allocator_.construct(new_arr + j, val);
+                }
+            } catch (...) {
+                for(size_type i = 0; i < j; ++i) {
+                    allocator_.destroy(new_arr + i);
+                }
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = old_capacity;
+                throw;
+            }
+            try {
+                std::uninitialized_copy(arr_ + pos_distance, arr_ + size_ , new_arr + j);
+            } catch (...) {
+                //todo тут < или Б=
+                for(size_type i = 0; i < j; ++i) {
+                    allocator_.destroy(new_arr + i);
+                }
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = old_capacity;
+                throw;
+            }
+            for (size_type i = 0; i < size_; ++i) {
+                allocator_.destroy(arr_ + i);
+            }
+            if (size_ != 0) {
+                allocator_.deallocate(arr_, size_);
+            }
+            arr_ = new_arr;
+            //todo проверять начиная отсюда + написать тестов
+        } else {
+            for (size_type i = size_ + n - 1; i > pos_distance + n; --i) {
+                allocator_.destroy(arr_ + i);
+                try {
+                    allocator_.construct(arr_ + i, arr_[i - 1]);
+                } catch (...) {
+                    exception_cleaner(size_ + n);
+                    throw;
+                }
+            }
+            for (size_type i = pos_distance; i < pos_distance + n; ++i) {
+                allocator_.destroy(arr_ + i);
+                try {
+                    allocator_.construct(arr_ + i, val);
+                } catch (...) {
+                    exception_cleaner(size_ + n);
+                    throw;
+                }
+            }
+        }
+        size_ += n;
+    }
 
+//    template <class InputIterator>
+//    void insert (iterator position, InputIterator first, InputIterator last);
 
     /*!
      * Очищает вектор.
@@ -743,7 +862,7 @@ bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
     if (lhs.size() != rhs.size()) {
         return false;
     }
-    for (typename vector<T, Alloc>::size_type i = 0; i != lhs.size(); ++i) {
+    for (typename vector<T, Alloc>::size_type i = 0; i < lhs.size(); ++i) {
         if (lhs[i] != rhs[i]) {
             return false;
         }
