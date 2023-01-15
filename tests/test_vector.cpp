@@ -927,6 +927,156 @@ void insertSecondTest() {
     }
 }
 
+void insertThirdTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+
+    std::vector<int>::const_iterator stdIt = ++stdVec.begin();
+    ft::vector<int>::iterator ftIt = ++ftVec.begin();
+
+    assert(*(ftVec.insert(ftIt, 9)) == *(stdVec.insert(stdIt, 9)));
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+
+    ftIt = ++ftVec.begin();
+    stdIt = ++stdVec.begin();
+
+    assert(*ftVec.insert(ftVec.insert(ftIt, 9), 100) == *stdVec.insert(stdVec.insert(stdIt, 9), 100));
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+
+    stdIt = stdVec.end();
+    ftIt = ftVec.end();
+
+    ftIt = ftVec.insert(ftIt, 9);
+    stdIt = stdVec.insert(stdIt, 9);
+    assert(*ftIt == *stdIt);
+
+}
+
+void secondInsertTypeFirstTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    std::vector<int>::iterator itStd = ++stdVec.begin();
+    ft::vector<int>::iterator itFt = ++ftVec.begin();
+
+    ftVec.insert(itFt, 2, 9);
+    stdVec.insert(itStd, 2, 9);
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+
+    itStd = ++stdVec.begin();
+    itFt = ++ftVec.begin();
+
+    ftVec.insert(itFt, 10, 9);
+    stdVec.insert(itStd, 10, 9);
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+}
+
+void secondInsertTypeSecondTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+    stdVec.reserve(100);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+    ftVec.reserve(100);
+
+    std::vector<int>::iterator itStd = ++stdVec.begin();
+    ft::vector<int>::iterator itFt = ++ftVec.begin();
+
+    ftVec.insert(itFt, 10, 9);
+    stdVec.insert(itStd, 10, 9);
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+}
+
+void secondInsertTypeThirdTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+    std::vector<int>::iterator itStd = stdVec.end();
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+    ft::vector<int>::iterator itFt = ftVec.end();
+
+    ftVec.insert(itFt, 5, 9);
+    stdVec.insert(itStd, 5, 9);
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+}
+
+void secondInsertTypeFourthTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+    std::vector<int>::iterator itStd = stdVec.begin();
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+    ft::vector<int>::iterator itFt = ftVec.begin();
+
+    ftVec.insert(itFt, 5, 9);
+    stdVec.insert(itStd, 5, 9);
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+}
+
 //====================
 //===ITERATOR TESTS===
 //====================
@@ -1622,53 +1772,76 @@ void reverseIteratorRelationTest() {
     assert((crit1 <= crit2) == (critStd1 <= critStd2));
 }
 
-void test() {
-    std::vector<int> stdVec;
-    stdVec.push_back(1);
-//    stdVec.push_back(2);
-//    stdVec.push_back(3);
-//    stdVec.push_back(4);
-
-//    std::vector<int>::const_iterator it = stdVec.end();
-//
-//    stdVec.insert(it, 2);
-//    for (size_t i = 0; i != stdVec.size(); ++i) {
-//        std::cout << stdVec[i] << std::endl;
-//    }
-
-
+void eraseFirstTest() {
     ft::vector<int> ftVec;
     ftVec.push_back(1);
     ftVec.push_back(2);
     ftVec.push_back(3);
+    ftVec.push_back(4);
+    ft::vector<int>::iterator itft = ++ftVec.begin();
 
-    ft::vector<int>::iterator it = ++ftVec.begin();
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+    std::vector<int>::iterator itStd = ++stdVec.begin();
 
-    ftVec.insert(it, 2, 9);
+    assert(*ftVec.erase(itft) == *stdVec.erase(itStd));
 
-    for (size_t i = 0; i != ftVec.size(); ++i) {
-        std::cout << ftVec[i] << std::endl;
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++ i) {
+        assert(ftVec[i] == stdVec[i]);
     }
 
 
+}
 
-//    ft::vector<int> ftVec;
-//    ftVec.push_back(1);
-//    ftVec.push_back(2);
-//    ftVec.push_back(3);
-//    ftVec.push_back(4);
-//
-//    std::cout << ftVec.size() << " " << ftVec.capacity() << std::endl;
-//
-//    ft::vector<int>::iterator it = ftVec.begin();
-//
-//    ++it;
-//
-//    *ftVec.insert(it, 9);
-//
-//    for (size_t i = 0; i != ftVec.size(); ++i) {
-//        std::cout << ftVec[i] << std::endl;
-//    }
+void eraseSecondTest() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+    ft::vector<int>::iterator itft = ftVec.end();
+
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+    std::vector<int>::iterator itStd = stdVec.end();
+
+    itStd = stdVec.begin();
+    itft = ftVec.begin();
+
+
+    assert(*ftVec.erase(itft) == *stdVec.erase(itStd));
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++ i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+
+}
+
+void test() {
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    ft::vector<int>::iterator it1 = ++ftVec.begin();
+    ft::vector<int>::iterator it2 = it1 + 1;
+
+    ftVec.erase(it1, it2);
+    for (size_t i = 0; i != ftVec.size(); ++ i) {
+        std::cout << ftVec[i] << std::endl;
+    }
+
 }
 
 //todo для всех const методов надо будет сделать const версии тестов
@@ -1698,7 +1871,14 @@ int main(void) {
     relationalOperatorTest();
     insertFirstTest();
     insertSecondTest();
+    insertThirdTest();
+    secondInsertTypeFirstTest();
+    secondInsertTypeSecondTest();
+    secondInsertTypeThirdTest();
+    secondInsertTypeFourthTest();
 
+    eraseFirstTest();
+    eraseSecondTest();
 
     //! ITER TESTS
     iterConstructorTest();
@@ -1727,6 +1907,6 @@ int main(void) {
     reverseIteratorBraceTest();
     reverseIteratorRelationTest();
 
-    //test();
+    test();
     return (0);
 }

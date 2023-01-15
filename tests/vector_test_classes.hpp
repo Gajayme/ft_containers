@@ -20,16 +20,12 @@ namespace vector_tests_classes {
 //};
 //
 ////! Класс без конструктора по умолчанию
-//class NoDefConstructorClass {
-//public:
-//    NoDefConstructorClass(std::string str) :
-//            str_(str) {
-//    }
-//    NoDefConstructorClass(NoDefConstructorClass &other) = delete;
-//
-//private:
-//    std::string str_;
-//};
+class NoDefConstructorClass {
+public:
+    NoDefConstructorClass();
+
+    std::string str_;
+};
 
 //! Класс с конструктором по умолчанию и конструктором копирования
 class CopyConstructorClass {

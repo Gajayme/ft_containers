@@ -566,13 +566,16 @@ public:
     }
 
     /*!
-     * Добавляет удаляет из вектора последний элемент.
+     * Удаляет из вектора последний элемент.
      */
     void pop_back() {
         --size_;
         allocator_.destroy(arr_ + size_);
     }
 
+    /*!
+     * Добавляет в вектор элемент по итератору.
+     */
     iterator insert (const_iterator position, const value_type&  val) {
         //todo для этого я изменил оператор - у вектора (теперь он принимает рвалью ссылку. Правильно ли это?!!
         //todo протестить exception safety
@@ -641,6 +644,9 @@ public:
         return begin() + pos_distance;
     }
 
+    /*!
+     * Добавляет в вектор указанное количество элементов по итератору.
+     */
     void insert (const_iterator position, size_type n, const value_type& val) {
         //todo протестить exception safety
         if (position < begin() || position > end()) {
@@ -674,7 +680,6 @@ public:
             try {
                 std::uninitialized_copy(arr_ + pos_distance, arr_ + size_ , new_arr + j);
             } catch (...) {
-                //todo тут < или Б=
                 for(size_type i = 0; i < j; ++i) {
                     allocator_.destroy(new_arr + i);
                 }
@@ -689,16 +694,13 @@ public:
                 allocator_.deallocate(arr_, size_);
             }
             arr_ = new_arr;
-            //todo проверять начиная отсюда + написать тестов
         } else {
-            for (size_type i = size_ + n - 1; i > pos_distance + n; --i) {
-                allocator_.destroy(arr_ + i);
-                try {
-                    allocator_.construct(arr_ + i, arr_[i - 1]);
-                } catch (...) {
-                    exception_cleaner(size_ + n);
-                    throw;
-                }
+            try {
+                std::uninitialized_copy(arr_ + pos_distance, arr_ + size_, arr_ + pos_distance + n);
+            } catch (...) {
+                clear();
+                allocator_.deallocate(arr_, capacity_);
+                throw;
             }
             for (size_type i = pos_distance; i < pos_distance + n; ++i) {
                 allocator_.destroy(arr_ + i);
@@ -715,6 +717,48 @@ public:
 
 //    template <class InputIterator>
 //    void insert (iterator position, InputIterator first, InputIterator last);
+
+    /*!
+     * Удаляет элемент по итератору.
+     */
+    iterator erase (const_iterator position) {
+        const size_type pos_distance = position.operator->() - arr_;
+        allocator_.destroy(arr_ + pos_distance);
+        --size_;
+        for (size_type i = pos_distance; i < size_; ++i) {
+            try {
+                allocator_.construct(arr_ + i, *(arr_ + i + 1));
+            } catch (...) {
+                clear();
+                allocator_.deallocate(arr_, capacity_);
+                throw ;
+            }
+            allocator_.destroy(arr_ + i + 1);
+        }
+        return (begin() + pos_distance);
+    }
+
+    /*!
+     * Удаляет элемент по итератору.
+     */
+     //todo где-то здесь ошибка. Найти и поправить тесты
+    iterator erase (const_iterator first, const_iterator last) {
+        const size_type first_distance = first.operator->() - arr_;
+        const size_type last_distance = last.operator->() - arr_;
+        const size_type n = last_distance - first_distance;
+
+
+        for (size_type i = first_distance; i < last_distance; ++i) {
+            allocator_.destroy(arr_ + i);
+        }
+        for (size_type i = first_distance; i < size_ - n; ++i) {
+            allocator_.construct(arr_ + i, *(arr_ + last_distance + i));
+            allocator_.destroy(arr_ + last_distance + i);
+        }
+        size_ -= n;
+        return (begin() + last_distance);
+
+    }
 
     /*!
      * Очищает вектор.
