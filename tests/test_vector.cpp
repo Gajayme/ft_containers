@@ -212,6 +212,12 @@ void resizeTests() {
     }
 }
 
+void maxSizeTest() {
+    ft::vector<int> vec(10, 10);
+
+    std::cout << "Max size = " << vec.max_size() << std::endl;
+}
+
 void assignTests() {
     //! тесты с int
     {
@@ -1077,6 +1083,84 @@ void secondInsertTypeFourthTest() {
     }
 }
 
+
+void thirdInsertTypeFirstTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+
+    std::vector<int>::iterator itStd = ++stdVec.begin();
+    ft::vector<int>::iterator itFt = ++ftVec.begin();
+
+    ftVec.insert(itFt, ftVec.begin(), ftVec.begin() + 2);
+    stdVec.insert(itStd, stdVec.begin(), stdVec.begin() + 2);
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+
+    itStd = ++stdVec.begin();
+    itFt = ++ftVec.begin();
+
+    ftVec.insert(itFt, ftVec.begin(), ftVec.end());
+    stdVec.insert(itStd, stdVec.begin(), stdVec.end());
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+}
+
+void thirdInsertTypeSecondTest() {
+    std::vector<int> stdVec;
+    stdVec.push_back(1);
+    stdVec.push_back(2);
+    stdVec.push_back(3);
+    stdVec.push_back(4);
+    stdVec.reserve(100);
+
+    ft::vector<int> ftVec;
+    ftVec.push_back(1);
+    ftVec.push_back(2);
+    ftVec.push_back(3);
+    ftVec.push_back(4);
+    ftVec.reserve(100);
+
+
+    std::vector<int>::iterator itStd = ++stdVec.begin();
+    ft::vector<int>::iterator itFt = ++ftVec.begin();
+
+    stdVec.insert(itStd, stdVec.begin(), stdVec.end());
+    ftVec.insert(itFt, ftVec.begin(), ftVec.end());
+
+//    for (size_t i = 0; i != ftVec.size(); ++ i) {
+//        std::cout << ftVec[i] << std::endl;
+//    }
+//    std::cout << std::endl;
+//    for (size_t i = 0; i != stdVec.size(); ++ i) {
+//        std::cout << stdVec[i] << std::endl;
+//    }
+
+
+    assert(ftVec.size() == stdVec.size());
+    assert(ftVec.capacity() == stdVec.capacity());
+    for (size_t i = 0; i != ftVec.size(); ++i) {
+        assert(ftVec[i] == stdVec[i]);
+    }
+}
+
+
 //====================
 //===ITERATOR TESTS===
 //====================
@@ -1834,13 +1918,26 @@ void test() {
     ftVec.push_back(3);
     ftVec.push_back(4);
 
-    ft::vector<int>::iterator it1 = ++ftVec.begin();
-    ft::vector<int>::iterator it2 = it1 + 1;
+//    std::vector<int> stdVec;
+//    stdVec.push_back(1);
+//    stdVec.push_back(2);
+//    stdVec.push_back(3);
+//    stdVec.push_back(4);
 
-    ftVec.erase(it1, it2);
-    for (size_t i = 0; i != ftVec.size(); ++ i) {
-        std::cout << ftVec[i] << std::endl;
-    }
+    ft::vector<int>::iterator it1 = ftVec.begin();
+    ft::vector<int>::iterator first = it1 + 2;
+    ft::vector<int>::iterator last = it1 + 3;
+
+//    std::vector<int>::iterator it = ++stdVec.begin();
+//    int n = 5;
+//    int j = 10;
+//
+//    int *x = &n;
+//    int *y = &j;
+//
+//    stdVec.insert(it, x, y);
+    ftVec.insert(it1, first, last);
+
 
 }
 
@@ -1850,6 +1947,7 @@ int main(void) {
     std::cout << "Tests\n";
 
     //! VECTOR TESTS
+    maxSizeTest();
     constructorsTest();
     copyConstructorsTest();
     assignmentOperatorTest();
@@ -1876,6 +1974,10 @@ int main(void) {
     secondInsertTypeSecondTest();
     secondInsertTypeThirdTest();
     secondInsertTypeFourthTest();
+    thirdInsertTypeFirstTest();
+
+    //todo ошибка с инсертом в сам вектор
+    //thirdInsertTypeSecondTest();
 
     eraseFirstTest();
     eraseSecondTest();

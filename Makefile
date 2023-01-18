@@ -1,7 +1,7 @@
 NAME		= 	containers
 
 CXX			= g++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -O2 -g
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++11 -O2 -g
 RM			= rm -f
 
 #SRC			= $(wildcard *.cpp)
@@ -38,7 +38,7 @@ clean:
 			$(RM) $(OBJS_V)
 			$(RM) $(OBJS_S)
 
-fclean:		clean
+fclean:		clean Makefile
 			#$(RM) $(NAME)
 			$(RM) vec
 			$(RM) stk

@@ -10,6 +10,7 @@
 #include "../utils/conditional.hpp"
 #include "../utils/lexicographical_compare.hpp"
 #include "../utils/reverse_iterator.hpp"
+#include "../utils/is_integral.hpp"
 
 namespace ft {
 
@@ -437,6 +438,13 @@ public:
     }
 
     /*!
+     * Возвращает максимально возможный размер вертора
+     */
+    size_type max_size() const {
+        return allocator_.max_size();
+    }
+
+    /*!
      * Пуст ли вектор.
      */
     bool empty() const {
@@ -574,7 +582,9 @@ public:
     }
 
     /*!
-     * Добавляет в вектор элемент по итератору.
+     * Добавляет в вектор элемент.
+     * @param position итератор, перед которым будут добавлено новое значение.
+     * @param val значение, от которого будет конструироваться добавляемый элемент.
      */
     iterator insert (const_iterator position, const value_type&  val) {
         //todo для этого я изменил оператор - у вектора (теперь он принимает рвалью ссылку. Правильно ли это?!!
@@ -645,7 +655,10 @@ public:
     }
 
     /*!
-     * Добавляет в вектор указанное количество элементов по итератору.
+     * Добавляет в вектор указанное количество элементов.
+     * @param position итератор, перед которым будут добавлены новые значения.
+     * @param n количество добавляемы х элементов.
+     * @param val значение, от которого будут конструироваться добавляемые элементы.
      */
     void insert (const_iterator position, size_type n, const value_type& val) {
         //todo протестить exception safety
@@ -655,7 +668,7 @@ public:
         const size_type pos_distance = position - begin();
         if (capacity_ < size_ + n) {
             size_type old_capacity = capacity_;
-            capacity_ = (size_ * 2 < size_ + n) ? size_ + n : (size_ * 2);
+            capacity_ = (capacity_ * 2 < size_ + n) ? size_ + n : (capacity_ * 2);
             pointer new_arr = allocator_.allocate(capacity_);
             try {
                 std::uninitialized_copy(arr_, arr_ + pos_distance, new_arr);
@@ -715,8 +728,84 @@ public:
         size_ += n;
     }
 
-//    template <class InputIterator>
-//    void insert (iterator position, InputIterator first, InputIterator last);
+    /*!
+     * Добавляет в вектор элементы.
+     * @param position итератор, перед которым будут добавлены новые значения.
+     * @param first итератор на начало добавляемой последовательности.
+     * @param last итератор на конец добавляемой последовательности.
+     */
+    template <class InputIterator>
+    void insert (iterator position, InputIterator first, InputIterator last,
+                 typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0) {
+        if (position < begin() || position > end()) {
+            throw std::logic_error("vector");
+        }
+        const size_type pos_distance = position - begin();
+        const size_type n = static_cast<size_type>(std::distance(first, last));
+        if (size_ + n > capacity_) {
+            size_type old_capacity = capacity_;
+            capacity_ = (capacity_ * 2 < size_ + n) ? size_ + n : (capacity_ * 2);
+            pointer new_arr = allocator_.allocate(capacity_);
+            try {
+                std::uninitialized_copy(arr_, arr_ + pos_distance, new_arr);
+            } catch (...) {
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = old_capacity;
+                throw;
+            }
+            size_type j = pos_distance;
+            try {
+                for (; j != pos_distance + n; ++j) {
+                    allocator_.construct(new_arr + j, *first);
+                    ++first;
+                }
+            } catch (...) {
+                for(size_type i = 0; i < j; ++i) {
+                    allocator_.destroy(new_arr + i);
+                }
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = old_capacity;
+                throw;
+            }
+            try {
+                std::uninitialized_copy(arr_ + pos_distance, arr_ + size_ , new_arr + j);
+            } catch (...) {
+                for(size_type i = 0; i < j; ++i) {
+                    allocator_.destroy(new_arr + i);
+                }
+                allocator_.deallocate(new_arr, capacity_);
+                capacity_ = old_capacity;
+                throw;
+            }
+            for (size_type i = 0; i < size_; ++i) {
+                allocator_.destroy(arr_ + i);
+            }
+            if (size_ != 0) {
+                allocator_.deallocate(arr_, size_);
+            }
+            arr_ = new_arr;
+        } else {
+            try {
+                std::uninitialized_copy(arr_ + pos_distance, arr_ + size_, arr_ + pos_distance + n);
+            } catch (...) {
+                clear();
+                allocator_.deallocate(arr_, capacity_);
+                throw;
+            }
+            try {
+                for (size_type i = pos_distance + n; i > pos_distance; --i) {
+                    allocator_.destroy(arr_ + i);
+                    allocator_.construct(arr_ + i, *last);
+                    --first;
+                    //std::cout << *first << std::endl;
+                }
+            } catch (...) {
+                    exception_cleaner(size_ + n);
+                    throw;
+            }
+        }
+        size_ += n;
+    }
 
     /*!
      * Удаляет элемент по итератору.
