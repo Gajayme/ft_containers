@@ -1,4 +1,3 @@
-#pragma once
 #include "vector_tests_header.h"
 
 void iterConstructorTest() {

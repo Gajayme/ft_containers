@@ -5,7 +5,14 @@ CXXFLAGS	= -Wall -Wextra -Werror -std=c++11 -O2 -g
 RM			= rm -f
 
 #SRC			= $(wildcard *.cpp)
-SRC_V			= tests/test_vector.cpp
+SRC_V			= tests/test_vector.cpp \
+tests/vector_constructors_tests.cpp \
+tests/vector_iter_tests.cpp \
+tests/vector_reverse_iter_tests.cpp \
+tests/vector_operators_tests.cpp \
+tests/vector_simple_methods_tests.cpp \
+tests/vector_complicated_methods_tests.cpp \
+
 SRC_S			= tests/test_stack.cpp
 
 #INC			= $(wildcard *.hpp)
