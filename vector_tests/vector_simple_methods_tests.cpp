@@ -45,8 +45,8 @@ void swapTest () {
 
 void maxSizeTest() {
     ft::vector<int> vec(10, 10);
-
-    std::cout << "Max size = " << vec.max_size() << std::endl;
+    size_t  n = vec.max_size();
+    assert(n != 0);
 }
 
 void atTest() {

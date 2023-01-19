@@ -1,7 +1,7 @@
 *.o
 a.out
 .DS_Store
-tests/test_stack.cpp
+stack_tests/test_stack_main.cpp
 .vscode
 .idea
 *gch

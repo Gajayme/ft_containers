@@ -5,27 +5,27 @@ void resizeTests() {
     {
         std::vector<int> stdVector;
         ft::vector<int> ftVector;
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(0);
         ftVector.resize(0);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(5);
         ftVector.resize(5);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(3, 1000);
         ftVector.resize(3, 1000);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(0);
         ftVector.resize(0);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
 
     //! тесты с пользовательским классом без конструктора по умолчания, но с конструктором копирования
@@ -33,27 +33,27 @@ void resizeTests() {
         StdCopyCrtrVector stdVector;
         FtCopyCrtrVector ftVector;
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(0);
         ftVector.resize(0);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(5);
         ftVector.resize(5);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(3, std::string("hello"));
         ftVector.resize(3, std::string("hello"));
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.resize(0);
         ftVector.resize(0);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
 }
 
@@ -121,6 +121,86 @@ void assignTests() {
 
         asserter(stdVector, ftVector);
     }
+    {
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec2;
+        ft::vector<int> ftVec2;
+
+        stdVec2.assign(stdVec.begin(), stdVec.end());
+        ftVec2.assign(ftVec.begin(), ftVec.end());
+        asserter(stdVec2, ftVec2);
+    }
+    {
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec2(10, 10);
+
+
+        ft::vector<int> ftVec2(10, 10);
+
+        stdVec2.assign(stdVec.begin(), stdVec.end());
+        ftVec2.assign(ftVec.begin(), ftVec.end());
+        //printer(stdVec2, ftVec2);
+        asserter(stdVec2, ftVec2);
+    }
+    {
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec2(10, 10);
+
+
+        ft::vector<int> ftVec2(10, 10);
+
+        stdVec2.assign(stdVec.begin(), stdVec.begin());
+        ftVec2.assign(ftVec.begin(), ftVec.begin());
+        //printer(stdVec2, ftVec2);
+        asserter(stdVec2, ftVec2);
+    }
+    {
+        std::vector<int> stdVec;
+
+        ft::vector<int> ftVec;
+
+        std::vector<int> stdVec2;
+
+        ft::vector<int> ftVec2;
+
+        stdVec2.assign(stdVec.begin(), stdVec.begin());
+        ftVec2.assign(ftVec.begin(), ftVec.begin());
+        //printer(stdVec2, ftVec2);
+        asserter(stdVec2, ftVec2);
+    }
 }
 
 void reserveTests() {
@@ -129,54 +209,54 @@ void reserveTests() {
         std::vector<int> stdVector;
         ft::vector<int> ftVector;
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(100);
         ftVector.reserve(100);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(10);
         ftVector.reserve(10);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(100);
         ftVector.reserve(100);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(1000);
         ftVector.reserve(1000);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
     //! тесты с пользовательским классом без конструктора по умолчания, но с конструктором копирования
     {
         StdCopyCrtrVector stdVector;
         FtCopyCrtrVector ftVector;
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(100);
         ftVector.reserve(100);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(10);
         ftVector.reserve(10);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(100);
         ftVector.reserve(100);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.reserve(1000);
         ftVector.reserve(1000);
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
 }
 
@@ -186,12 +266,12 @@ void pushBackTest(void) {
         std::vector<int> stdVector;
         ft::vector<int> ftVector;
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.push_back(1);
         ftVector.push_back(1);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.push_back(2);
         ftVector.push_back(2);
@@ -200,24 +280,24 @@ void pushBackTest(void) {
         stdVector.push_back(4);
         ftVector.push_back(4);
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
     //! custom classes
     {
         StdCopyCrtrVector stdVector;
         FtCopyCrtrVector ftVector;
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.push_back(std::string ("hello"));
         ftVector.push_back(std::string("hello"));
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         stdVector.push_back(vector_tests_classes::CopyConstructorClass());
         ftVector.push_back(vector_tests_classes::CopyConstructorClass());
 
-        asserter<StdCopyCrtrVector, FtCopyCrtrVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
 }
 
@@ -233,7 +313,7 @@ void popBackTest() {
         stdVector.push_back(1);
         stdVector.pop_back();
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         ftVector.push_back(1);
         ftVector.push_back(2);
@@ -246,7 +326,7 @@ void popBackTest() {
 
         stdVector.pop_back();
 
-        asserter<std::vector<int>, ft::vector<int> >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
     //! custom classes
     {
@@ -259,7 +339,7 @@ void popBackTest() {
         ftVector.push_back(std::string("hello"));
         ftVector.push_back(std::string("hello"));
 
-        asserter<StdCopyCrtrVector , FtCopyCrtrVector >(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
 }
 
@@ -272,7 +352,7 @@ void exceptionSafetyTest() {
         ftVector.resize(n, std::string("hello"));
         stdVector.resize(n, std::string("hello"));
 
-        asserter<StdExceptVector , FtExceptVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         n *= 2;
         //todo если увеличить на 15, то capacity у стандартного вектора станет 20 почему-то
@@ -284,7 +364,7 @@ void exceptionSafetyTest() {
             stdVector.resize(n, std::string("bye"));
         } catch (...) {
         }
-        asserter<StdExceptVector , FtExceptVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
     }
     {
         StdExceptVector stdVector;
@@ -293,13 +373,13 @@ void exceptionSafetyTest() {
         stdVector.push_back(std::string("hello"));
         ftVector.push_back(std::string("hello"));
 
-        asserter<StdExceptVector , FtExceptVector>(stdVector, ftVector);
+        asserter(stdVector, ftVector);
 
         try {
             stdVector.push_back(std::string("bye"));
             ftVector.push_back(std::string("bye"));
         } catch(...) {
-            asserter<StdExceptVector , FtExceptVector>(stdVector, ftVector);
+            asserter(stdVector, ftVector);
         }
     }
 }

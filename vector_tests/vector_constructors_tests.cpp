@@ -29,6 +29,40 @@ void vectorConstructorTest() {
         } catch (...) {
         }
     }
+    {
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec2(stdVec.begin(), stdVec.end());
+        ft::vector<int> ftVec2(ftVec.begin(), ftVec.end());
+        asserter(stdVec2, ftVec2);
+    }
+    {
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec2(stdVec.begin(), stdVec.begin());
+        ft::vector<int> ftVec2(ftVec.begin(), ftVec.begin());
+        asserter(stdVec2, ftVec2);
+    }
 }
 
 void vectorAssignmentOperatorTest() {

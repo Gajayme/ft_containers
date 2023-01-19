@@ -83,10 +83,10 @@ void bracesOperatorTest();
 void relationalOperatorTest();
 
 
-template <typename T>
-void printer(T std, T ft) {
-    std::cout << "std = " << std << " | ";
-    std::cout << "ft = " << ft << std::endl;
+template <typename T, typename U>
+void printer(T &std, U &ft) {
+    std::cout << "std | size = " << std.size() << " capacity = " << std.capacity() << std::endl;
+    std::cout << "ft | size = " << ft.size() << " capacity = " << ft.capacity() << std::endl;
 }
 
 template <typename STD, typename  FT>

@@ -9,23 +9,56 @@
 #include <vector>
 
 void test() {
+    std::vector<int> vec1(1, 1);
 
+    std::vector<int> vec2;
+    vec2.push_back(1);
+    vec2.push_back(2);
+    vec2.push_back(2);
+    vec2.push_back(2);
+    vec2.push_back(2);
+    vec2.push_back(2);
+    vec2.push_back(2);
+
+    vec1.assign(vec2.begin(), vec2.end());
+
+    //std::cout << vec1.size() << " " << vec1.capacity() << std::endl;
 }
 
 //todo для всех const методов надо будет сделать const версии тестов
 int main(void) {
 
+    //! VECTOR COMPLICATED METHODS TESTS
+    resizeTests();
+    assignTests();
+    pushBackTest();
+    popBackTest();
+    //insertFirstTest();
+    insertSecondTest();
+    insertThirdTest();
+    secondInsertTypeFirstTest();
+    secondInsertTypeSecondTest();
+    secondInsertTypeThirdTest();
+    secondInsertTypeFourthTest();
+    thirdInsertTypeFirstTest();
+    eraseFirstTest();
+    eraseSecondTest();
+    //todo ошибка с инсертом в сам вектор
+    //thirdInsertTypeSecondTest();
+
     //! VECTOR TESTS
+
+
     maxSizeTest();
     vectorConstructorTest();
     copyConstructorsTest();
     vectorAssignmentOperatorTest();
-    resizeTests();
-    assignTests();
+
+
+
     swapTest();
     reserveTests();
-    pushBackTest();
-    popBackTest();
+
     bracesOperatorTest();
     atTest();
     frontTest();
@@ -36,20 +69,7 @@ int main(void) {
     allocatorTest();
     exceptionSafetyTest();
     relationalOperatorTest();
-    insertFirstTest();
-    insertSecondTest();
-    insertThirdTest();
-    secondInsertTypeFirstTest();
-    secondInsertTypeSecondTest();
-    secondInsertTypeThirdTest();
-    secondInsertTypeFourthTest();
-    thirdInsertTypeFirstTest();
 
-    //todo ошибка с инсертом в сам вектор
-    //thirdInsertTypeSecondTest();
-
-    eraseFirstTest();
-    eraseSecondTest();
 
     //! ITER TESTS
     iterConstructorTest();

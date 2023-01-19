@@ -235,7 +235,7 @@ class vector {
          *  Оператор - (iter - iter)
          */
         template<bool B>
-        difference_type operator- (random_access_iterator<B> other) const {
+        difference_type operator - (random_access_iterator<B> other) const {
             return ptr_ - other.operator->();
         }
 
@@ -357,6 +357,27 @@ public:
 //    vector (const vector& x) :  _size(0), _capacity(0){
 //        *this = x;
 //    }
+
+    /*!
+     * Конструктор от двух итераторов.
+     * @param first итератор на начало диапазона, значениями которого будет
+     * проинициализирован вектор.
+     * @param last итератор на конец диапазона, значениями которого будет
+     * проинициализирован вектор.
+     */
+    template <class InputIterator>
+    vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
+            typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0):
+            arr_(NULL),
+            size_(0),
+            capacity_(0),
+            allocator_(alloc) {
+        size_type n = last - first;
+        reserve(n);
+        for (; first != last; ++first) {
+            push_back(*first);
+        }
+    }
 
     /*!
      * Конструктор копирования
@@ -481,6 +502,22 @@ public:
     void assign (const size_type n, const value_type& val) {
         clear();
         resize(n, val);
+    }
+
+    /*!
+     * Заменяет контент вектора, модифицирует размер вектора.
+     * @param first количество элементов после изменения
+     * @param last количество элементов после изменения
+     * @param val элемент, которым будет заполнен вектор после изменения
+     */
+    template <class InputIterator>
+    void assign (InputIterator first, InputIterator last,
+                 typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = 0) {
+        clear();
+        reserve(last - first);
+        for (; first != last; ++ first) {
+            push_back(*first);
+        }
     }
 
     /*!
@@ -797,7 +834,6 @@ public:
                     allocator_.destroy(arr_ + i);
                     allocator_.construct(arr_ + i, *last);
                     --first;
-                    //std::cout << *first << std::endl;
                 }
             } catch (...) {
                     exception_cleaner(size_ + n);
@@ -975,7 +1011,6 @@ private:
             allocator_.destroy(arr_ + i);
         }
         if (arr_ != NULL) {
-            //delete[] reinterpret_cast<int8_t *>(arr_);
             allocator_.deallocate(arr_, capacity_);
         }
         arr_ = newArr;
