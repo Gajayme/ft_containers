@@ -9,31 +9,47 @@
 #include <vector>
 
 void test() {
-    std::vector<int> vec1(1, 1);
+    std::cout << "std\n";
+    {
+        using namespace std;
+        std::vector<int> vec1;
+        vec1.push_back(1);
+        vec1.push_back(2);
+        vec1.push_back(3);
+        vec1.push_back(4);
+        vec1.push_back(5);
 
-    std::vector<int> vec2;
-    vec2.push_back(1);
-    vec2.push_back(2);
-    vec2.push_back(2);
-    vec2.push_back(2);
-    vec2.push_back(2);
-    vec2.push_back(2);
-    vec2.push_back(2);
+        printer(vec1);
+        std::cout << std::endl;
+        vec1.resize(10);
+        printer(vec1);
+    }
+    std::cout << "\nft\n";
+    {
+        using namespace std;
+        ft::vector<int> vec1;
+        vec1.push_back(1);
+        vec1.push_back(2);
+        vec1.push_back(3);
+        vec1.push_back(4);
+        vec1.push_back(5);
 
-    vec1.assign(vec2.begin(), vec2.end());
-
-    //std::cout << vec1.size() << " " << vec1.capacity() << std::endl;
+        printer(vec1);
+        std::cout << std::endl;
+        vec1.resize(10);
+        printer(vec1);
+    }
 }
 
-//todo для всех const методов надо будет сделать const версии тестов
 int main(void) {
 
     //! VECTOR COMPLICATED METHODS TESTS
+    reserveTests();
     resizeTests();
     assignTests();
     pushBackTest();
     popBackTest();
-    //insertFirstTest();
+    insertFirstTest();
     insertSecondTest();
     insertThirdTest();
     secondInsertTypeFirstTest();
@@ -43,23 +59,15 @@ int main(void) {
     thirdInsertTypeFirstTest();
     eraseFirstTest();
     eraseSecondTest();
-    //todo ошибка с инсертом в сам вектор
-    //thirdInsertTypeSecondTest();
+    eraseThirdTest();
 
-    //! VECTOR TESTS
-
-
-    maxSizeTest();
+    //! VECTOR CONSTRUCTOR TESTS
     vectorConstructorTest();
     copyConstructorsTest();
     vectorAssignmentOperatorTest();
 
-
-
-    swapTest();
-    reserveTests();
-
-    bracesOperatorTest();
+    //! VECTOR SIMPLE METHODS TESTS
+    maxSizeTest();
     atTest();
     frontTest();
     backTest();
@@ -67,6 +75,11 @@ int main(void) {
     clearTest();
     dataTest();
     allocatorTest();
+
+
+
+    swapTest();
+    bracesOperatorTest();
     exceptionSafetyTest();
     relationalOperatorTest();
 

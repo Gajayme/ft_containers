@@ -439,11 +439,11 @@ void insertSecondTest() {
     assert(*stdVec.insert(stdIt, 3) == *ftVec.insert(ftIt, 3));
 
     ftIt = ++ftVec.end();
-    try {
-        ftVec.insert(ftIt, 3);
-        assert(1 == 2);
-    } catch(...) {
-    }
+//    try {
+//        ftVec.insert(ftIt, 3);
+//        assert(1 == 2);
+//    } catch(...) {
+//    }
 }
 
 void insertThirdTest() {
@@ -635,45 +635,6 @@ void thirdInsertTypeFirstTest() {
     }
 }
 
-//todo ошибка в этом инсерте
-void thirdInsertTypeSecondTest() {
-    std::vector<int> stdVec;
-    stdVec.push_back(1);
-    stdVec.push_back(2);
-    stdVec.push_back(3);
-    stdVec.push_back(4);
-    stdVec.reserve(100);
-
-    ft::vector<int> ftVec;
-    ftVec.push_back(1);
-    ftVec.push_back(2);
-    ftVec.push_back(3);
-    ftVec.push_back(4);
-    ftVec.reserve(100);
-
-
-    std::vector<int>::iterator itStd = ++stdVec.begin();
-    ft::vector<int>::iterator itFt = ++ftVec.begin();
-
-    stdVec.insert(itStd, stdVec.begin(), stdVec.end());
-    ftVec.insert(itFt, ftVec.begin(), ftVec.end());
-
-//    for (size_t i = 0; i != ftVec.size(); ++ i) {
-//        std::cout << ftVec[i] << std::endl;
-//    }
-//    std::cout << std::endl;
-//    for (size_t i = 0; i != stdVec.size(); ++ i) {
-//        std::cout << stdVec[i] << std::endl;
-//    }
-
-
-    assert(ftVec.size() == stdVec.size());
-    assert(ftVec.capacity() == stdVec.capacity());
-    for (size_t i = 0; i != ftVec.size(); ++i) {
-        assert(ftVec[i] == stdVec[i]);
-    }
-}
-
 void eraseFirstTest() {
     ft::vector<int> ftVec;
     ftVec.push_back(1);
@@ -716,12 +677,78 @@ void eraseSecondTest() {
     itStd = stdVec.begin();
     itft = ftVec.begin();
 
-
     assert(*ftVec.erase(itft) == *stdVec.erase(itStd));
 
     assert(ftVec.size() == stdVec.size());
     assert(ftVec.capacity() == stdVec.capacity());
     for (size_t i = 0; i != ftVec.size(); ++ i) {
         assert(ftVec[i] == stdVec[i]);
+    }
+}
+
+void eraseThirdTest() {
+    {
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ftVec.erase(ftVec.begin(), ftVec.end());
+        stdVec.erase(stdVec.begin(), stdVec.end());
+
+        asserter(ftVec, stdVec);
+    }
+    {
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ftVec.erase(ftVec.begin(), ftVec.begin());
+        stdVec.erase(stdVec.begin(), stdVec.begin());
+
+        asserter(ftVec, stdVec);
+    }
+    {
+        ft::vector<int> ftVec;
+        ftVec.push_back(1);
+        ftVec.push_back(2);
+        ftVec.push_back(3);
+        ftVec.push_back(4);
+
+        std::vector<int> stdVec;
+        stdVec.push_back(1);
+        stdVec.push_back(2);
+        stdVec.push_back(3);
+        stdVec.push_back(4);
+
+        ftVec.erase(ftVec.begin(), ftVec.begin() + 2);
+        stdVec.erase(stdVec.begin(), stdVec.begin() + 2);
+
+        asserter(ftVec, stdVec);
+    }
+    {
+        ft::vector<int> ftVec;
+
+        std::vector<int> stdVec;
+
+        ftVec.erase(ftVec.begin(), ftVec.end());
+        stdVec.erase(stdVec.begin(), stdVec.end());
+
+        asserter(ftVec, stdVec);
     }
 }

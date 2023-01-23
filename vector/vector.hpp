@@ -353,11 +353,6 @@ public:
         resize (n, value);
     }
 
-    //todo может так??
-//    vector (const vector& x) :  _size(0), _capacity(0){
-//        *this = x;
-//    }
-
     /*!
      * Конструктор от двух итераторов.
      * @param first итератор на начало диапазона, значениями которого будет
@@ -401,9 +396,8 @@ public:
 
     /*!
      * Оператор присваивания.
-     * @param other вектор, который будет скопирован.
+     * @param other вектор, значения которого будут присвоены текущему.
      */
-    //todo тут можно немного оптимизировать переприсваиванием элементов (в случае, если присваиваем к меньшему вектору), а не удаляя их
     vector& operator= (const vector& other) {
         if (this == &other) {
             return *this;
@@ -459,7 +453,7 @@ public:
     }
 
     /*!
-     * Возвращает максимально возможный размер вертора
+     * Возвращает максимально возможный размер вектора.
      */
     size_type max_size() const {
         return allocator_.max_size();
@@ -479,7 +473,6 @@ public:
         return arr_;
     }
 
-    //todo это надо проверить
     /*!
      * Возвращает константный "сырой" указатель на данные вектора.
      */
@@ -538,12 +531,12 @@ public:
         }
         const size_type oldCapacity = capacity_;
         if (n > capacity_) {
-            reserve(n);
+            reserve((capacity_ * 2 > n) ? capacity_ * 2 : n);
         }
         size_type i = size_;
         try {
             for (; i < n; ++i) {
-                allocator_.construct(arr_ + i, value_type(value));
+                allocator_.construct(arr_ + i, value);
             }
         } catch (...) {
             for (size_type j = size_; j < i; ++j) {
@@ -625,11 +618,6 @@ public:
      */
     iterator insert (const_iterator position, const value_type&  val) {
         //todo для этого я изменил оператор - у вектора (теперь он принимает рвалью ссылку. Правильно ли это?!!
-        //todo протестить exception safety
-        //todo нужна ли эта проверка?
-        if (position < begin() || position > end()) {
-            throw std::logic_error("vector");
-        }
         const size_type pos_distance = position - begin();
         if (capacity_ == size_) {
             capacity_ = (size_ == 0) ? 1 : (size_ * 2);
@@ -698,10 +686,6 @@ public:
      * @param val значение, от которого будут конструироваться добавляемые элементы.
      */
     void insert (const_iterator position, size_type n, const value_type& val) {
-        //todo протестить exception safety
-        if (position < begin() || position > end()) {
-            throw std::logic_error("vector");
-        }
         const size_type pos_distance = position - begin();
         if (capacity_ < size_ + n) {
             size_type old_capacity = capacity_;
@@ -864,25 +848,25 @@ public:
     }
 
     /*!
-     * Удаляет элемент по итератору.
+     * Удаляет элементы по двум итераторам.
+     * @param first итератор на первый удаляемый элемент.
+     * @param last итератор на последний удаляемый элемент.
      */
-     //todo где-то здесь ошибка. Найти и поправить тесты
     iterator erase (const_iterator first, const_iterator last) {
-        const size_type first_distance = first.operator->() - arr_;
-        const size_type last_distance = last.operator->() - arr_;
-        const size_type n = last_distance - first_distance;
 
-
-        for (size_type i = first_distance; i < last_distance; ++i) {
-            allocator_.destroy(arr_ + i);
+        const size_type first_distance = static_cast<size_type>(first.operator->() - arr_);
+        const size_type size = static_cast<size_type>(last.operator->() - first.operator->());
+        for (size_type i = 0; i < size; ++i) {
+            allocator_.destroy(arr_ + first_distance + i);
         }
-        for (size_type i = first_distance; i < size_ - n; ++i) {
-            allocator_.construct(arr_ + i, *(arr_ + last_distance + i));
-            allocator_.destroy(arr_ + last_distance + i);
-        }
-        size_ -= n;
-        return (begin() + last_distance);
 
+        for (size_type i = first_distance; i < size_ - size; ++i) {
+            allocator_.construct(arr_ + i, *(arr_ + i + size));
+            allocator_.destroy(arr_ + i + size);
+        }
+        size_ -= size;
+
+        return begin() + first_distance;
     }
 
     /*!
@@ -1087,5 +1071,13 @@ void swap (vector<T,Alloc>& lhs, vector<T,Alloc>& rhs){
 }
 
 } //namespace ft
+
+namespace std {
+//
+//template <>
+//void swap<vector<>
+
+
+} //namespace std
 
 #endif //VECTOR_HPP

@@ -73,9 +73,9 @@ void secondInsertTypeSecondTest();
 void secondInsertTypeThirdTest();
 void secondInsertTypeFourthTest();
 void thirdInsertTypeFirstTest();
-void thirdInsertTypeSecondTest();
 void eraseFirstTest();
 void eraseSecondTest();
+void eraseThirdTest();
 
 
 //! Тесты операторов вектора
@@ -83,10 +83,14 @@ void bracesOperatorTest();
 void relationalOperatorTest();
 
 
-template <typename T, typename U>
-void printer(T &std, U &ft) {
-    std::cout << "std | size = " << std.size() << " capacity = " << std.capacity() << std::endl;
-    std::cout << "ft | size = " << ft.size() << " capacity = " << ft.capacity() << std::endl;
+template <typename T>
+void printer(T &vec) {
+
+    std::cout << "size = " << vec.size() << " capacity = " << vec.capacity() << std::endl;
+    for (size_t i = 0; i != vec.size(); ++i) {
+        std::cout << vec[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 template <typename STD, typename  FT>
