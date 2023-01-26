@@ -15,7 +15,7 @@ SRC_V			= 	vector_tests/vector_tests_main.cpp \
 
 SRC_S			=	stack_tests/test_stack_main.cpp \
 
-SRC_M			=	map_tests/main.cpp \
+SRC_M			=	map_tests/map_tests_main.cpp \
 					map_tests/pair_tests.cpp \
 
 #INC			= $(wildcard *.hpp)

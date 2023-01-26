@@ -62,7 +62,7 @@ void clearTest();
 void resizeTests();
 void assignTests();
 void reserveTests();
-void pushBackTest(void);
+void pushBackTest();
 void popBackTest();
 void exceptionSafetyTest();
 void insertFirstTest();

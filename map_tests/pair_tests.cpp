@@ -1,5 +1,6 @@
 
 #include <string>
+#include <vector>
 
 #include "map_tests_header.hpp"
 #include "../utils/pair.hpp"
@@ -10,7 +11,7 @@ void pair_assert(T lhs, U rhs) {
     assert(lhs.second == rhs.second);
 }
 
-void constructorsTest() {
+void mapConstructorsTest() {
     {
         ft::pair<int, char> pair1;
         ft::pair<int, char> pair2(1, 'a');
@@ -66,26 +67,22 @@ void constructorsTest() {
 
     }
     {
-        std::pair<int, char>::first_type a = 1;
-        std::pair<int, char>::second_type b = 'a';
-
-        ft::pair<int, char>::first_type c = 1;
-        ft::pair<int, char>::second_type d = 'a';
+//        std::pair<int, char>::first_type a = 1;
+//        std::pair<int, char>::second_type b = 'a';
+//
+//        ft::pair<int, char>::first_type c = 1;
+//        ft::pair<int, char>::second_type d = 'a';
     }
 }
 
-
-//todo продолжить отсюда
-void makePairTest() {
+void mapMakePairTest() {
     {
-        ft::pair<int, char> pair1(1, 'a');
-
-        assert(pair1.first ==  ft::make_pair(1, 'a').first);
-        assert(pair1.second ==  ft::make_pair(1, 'a').second);
+        assert(std::make_pair(1, 'a').first ==  ft::make_pair(1, 'a').first);
+        assert(std::make_pair(1, 'a').second ==  ft::make_pair(1, 'a').second);
     }
     {
         ft::pair<int, char> pair1 = ft::make_pair(1, 'a');
-        ft::pair<int, char> pair2 = ft::make_pair(1, 'a');
+        std::pair<int, char> pair2 = std::make_pair(1, 'a');
 
         assert(pair1.first == pair2.first);
         assert(pair1.second == pair2.second);
@@ -98,4 +95,128 @@ void makePairTest() {
         assert(pair1.first == pair2.first);
         assert(pair1.second == pair2.second);
     }
+}
+
+void mapRelationTest() {
+    std::string str1("12345");
+    std::string str2("2");
+
+    std::vector<int> vec1(10,1);
+    std::vector<int> vec2(10,2);
+    {
+        ft::pair<int, char> pair1(1, 'a');
+        ft::pair<int, char> pair2(1, 'a');
+        ft::pair<int, char> pair3(1, 'b');
+        ft::pair<int, char> pair4(2, 'a');
+
+        ft::pair<int, char> stdPair1(1, 'a');
+        ft::pair<int, char> stdPair2(1, 'a');
+        ft::pair<int, char> stdPair3(1, 'b');
+        ft::pair<int, char> stdPair4(2, 'a');
+
+        assert((pair1 == pair2) == (stdPair1 == stdPair2));
+        assert((pair1 != pair2) == (stdPair1 != stdPair2));
+        assert((pair1 == pair3) == (stdPair1 == stdPair3));
+        assert((pair1 != pair3) == (stdPair1 != stdPair3));
+        assert((pair1 == pair4) == (stdPair1 == stdPair4));
+        assert((pair1 != pair4) == (stdPair1 != stdPair4));
+    }
+    {
+        ft::pair<int, char> pair1(1, 'a');
+        ft::pair<int, char> pair2(1, 'a');
+        ft::pair<int, char> pair3(1, 'b');
+        ft::pair<int, char> pair4(2, 'a');
+
+        ft::pair<int, char> stdPair1(1, 'a');
+        ft::pair<int, char> stdPair2(1, 'a');
+        ft::pair<int, char> stdPair3(1, 'b');
+        ft::pair<int, char> stdPair4(2, 'a');
+
+        assert((pair1 > pair2) == (stdPair1 > stdPair2));
+        assert((pair1 >= pair2) == (stdPair1 >= stdPair2));
+        assert((pair1 < pair2) == (stdPair1 < stdPair2));
+        assert((pair1 <= pair2) == (stdPair1 <= stdPair2));
+
+        assert((pair1 > pair3) == (stdPair1 > stdPair3));
+        assert((pair1 >= pair3) == (stdPair1 >= stdPair3));
+        assert((pair1 < pair3) == (stdPair1 < stdPair3));
+        assert((pair1 <= pair3) == (stdPair1 <= stdPair3));
+
+        assert((pair1 > pair4) == (stdPair1 > stdPair4));
+        assert((pair1 >= pair4) == (stdPair1 >= stdPair4));
+        assert((pair1 < pair4) == (stdPair1 < stdPair4));
+        assert((pair1 <= pair4) == (stdPair1 <= stdPair4));
+    }
+    {
+        ft::pair<int, std::string> pair1(1, str1);
+        ft::pair<int, std::string> pair2(1, str1);
+        ft::pair<int, std::string> pair3(1, str2);
+        ft::pair<int, std::string> pair4(2, str1);
+
+        ft::pair<int, std::string> stdPair1(1, str1);
+        ft::pair<int, std::string> stdPair2(1, str1);
+        ft::pair<int, std::string> stdPair3(1, str2);
+        ft::pair<int, std::string> stdPair4(2, str1);
+
+        assert((pair1 == pair2) == (stdPair1 == stdPair2));
+        assert((pair1 != pair2) == (stdPair1 != stdPair2));
+
+        assert((pair1 == pair3) == (stdPair1 == stdPair3));
+        assert((pair1 != pair3) == (stdPair1 != stdPair3));
+
+        assert((pair1 == pair4) == (stdPair1 == stdPair4));
+        assert((pair1 != pair4) == (stdPair1 != stdPair4));
+
+        assert((pair1 > pair2) == (stdPair1 > stdPair2));
+        assert((pair1 >= pair2) == (stdPair1 >= stdPair2));
+        assert((pair1 < pair2) == (stdPair1 < stdPair2));
+        assert((pair1 <= pair2) == (stdPair1 <= stdPair2));
+
+        assert((pair1 > pair3) == (stdPair1 > stdPair3));
+        assert((pair1 >= pair3) == (stdPair1 >= stdPair3));
+        assert((pair1 < pair3) == (stdPair1 < stdPair3));
+        assert((pair1 <= pair3) == (stdPair1 <= stdPair3));
+
+        assert((pair1 > pair4) == (stdPair1 > stdPair4));
+        assert((pair1 >= pair4) == (stdPair1 >= stdPair4));
+        assert((pair1 < pair4) == (stdPair1 < stdPair4));
+        assert((pair1 <= pair4) == (stdPair1 <= stdPair4));
+    }
+    {
+        ft::pair<int, std::vector<int> > pair1(1, vec1);
+        ft::pair<int, std::vector<int> > pair2(1, vec1);
+        ft::pair<int, std::vector<int> > pair3(1, vec2);
+        ft::pair<int, std::vector<int> > pair4(2, vec1);
+
+        ft::pair<int, std::vector<int> > stdPair1(1, vec1);
+        ft::pair<int, std::vector<int> > stdPair2(1, vec1);
+        ft::pair<int, std::vector<int> > stdPair3(1, vec2);
+        ft::pair<int, std::vector<int> > stdPair4(2, vec1);
+
+        assert((pair1 == pair2) == (stdPair1 == stdPair2));
+        assert((pair1 != pair2) == (stdPair1 != stdPair2));
+
+        assert((pair1 == pair3) == (stdPair1 == stdPair3));
+        assert((pair1 != pair3) == (stdPair1 != stdPair3));
+
+        assert((pair1 == pair4) == (stdPair1 == stdPair4));
+        assert((pair1 != pair4) == (stdPair1 != stdPair4));
+
+        assert((pair1 > pair2) == (stdPair1 > stdPair2));
+        assert((pair1 >= pair2) == (stdPair1 >= stdPair2));
+        assert((pair1 < pair2) == (stdPair1 < stdPair2));
+        assert((pair1 <= pair2) == (stdPair1 <= stdPair2));
+
+        assert((pair1 > pair3) == (stdPair1 > stdPair3));
+        assert((pair1 >= pair3) == (stdPair1 >= stdPair3));
+        assert((pair1 < pair3) == (stdPair1 < stdPair3));
+        assert((pair1 <= pair3) == (stdPair1 <= stdPair3));
+
+        assert((pair1 > pair4) == (stdPair1 > stdPair4));
+        assert((pair1 >= pair4) == (stdPair1 >= stdPair4));
+        assert((pair1 < pair4) == (stdPair1 < stdPair4));
+        assert((pair1 <= pair4) == (stdPair1 <= stdPair4));
+    }
+
+
 }

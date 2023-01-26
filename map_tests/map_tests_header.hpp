@@ -6,7 +6,8 @@
 #include "../utils/pair.hpp"
 
 //pair tests
-void constructorsTest();
-void makePairTest();
+void mapConstructorsTest();
+void mapMakePairTest();
+void mapRelationTest();
 
 #endif //FT_CONTAINERS_MAP_TESTS_HEADER_HPP
